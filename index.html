@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PLM Dynamic Property Prediction — Report Index</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f4f6f9;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* ── Top header ───────────────────────────────────────────── */
+    .site-header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f2a47 100%);
+      color: #fff;
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+    }
+    .site-header h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+    .site-header p {
+      font-size: 0.95rem;
+      color: #94b8d8;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* ── Model legend ─────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 1rem 2rem 0.5rem;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-ankh  { background: #16a34a; }
+    .dot-esm2  { background: #2563eb; }
+    .dot-prott5{ background: #7c3aed; }
+
+    /* ── Main layout ──────────────────────────────────────────── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    /* ── Section headings ─────────────────────────────────────── */
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f2a47;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 0.4rem;
+      margin: 2.5rem 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-title .badge-section {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .section-title.dynamic { border-color: #d97706; }
+    .section-title.dynamic .badge-section { background: #fef3c7; color: #b45309; }
+
+    /* ── Task block ───────────────────────────────────────────── */
+    .task-block {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .task-header {
+      padding: 0.9rem 1.2rem;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .task-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .task-meta {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+    .task-type-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .badge-binary   { background: #dcfce7; color: #166534; }
+    .badge-multiclass { background: #e0e7ff; color: #3730a3; }
+    .badge-site     { background: #fef9c3; color: #854d0e; }
+
+    /* ── Model cards grid ─────────────────────────────────────── */
+    .model-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 0;
+    }
+    .model-card {
+      padding: 1.2rem 1.4rem;
+      border-right: 1px solid #e2e8f0;
+      position: relative;
+    }
+    .model-card:last-child { border-right: none; }
+
+    .model-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 0.7rem;
+    }
+    .badge-ankh   { background: #dcfce7; color: #15803d; }
+    .badge-esm2   { background: #dbeafe; color: #1d4ed8; }
+    .badge-prott5 { background: #ede9fe; color: #6d28d9; }
+
+    .model-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-bottom: 0.9rem;
+    }
+
+    /* ── Metric row ───────────────────────────────────────────── */
+    .metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .metric-chip {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.76rem;
+      color: #475569;
+    }
+    .metric-chip span {
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .metric-chip.primary {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+    .metric-chip.primary span { color: #1e40af; font-size: 0.88rem; }
+    .metric-chip.best {
+      background: #fef9c3;
+      color: #854d0e;
+      position: relative;
+    }
+    .metric-chip.best::after {
+      content: " ★";
+      color: #d97706;
+      font-size: 0.7rem;
+    }
+
+    /* ── Open report button ───────────────────────────────────── */
+    .btn-report {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-report:hover { opacity: 0.82; }
+    .btn-ankh   { background: #16a34a; color: #fff; }
+    .btn-esm2   { background: #2563eb; color: #fff; }
+    .btn-prott5 { background: #7c3aed; color: #fff; }
+    .btn-na     { background: #e2e8f0; color: #94a3b8; cursor: default; font-style: italic; }
+
+    /* ── No model placeholder ─────────────────────────────────── */
+    .model-card.na { background: #fafafa; }
+    .na-text { font-size: 0.8rem; color: #94a3b8; font-style: italic; margin-top: 0.5rem; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      padding: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- HEADER                                                       -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <h1>PLM Dynamic &amp; Static Property Prediction</h1>
+  <p>Index of all analysis reports — protein language model embeddings (Ankh · ESM2 · ProtT5) benchmarked across static and dynamic protein properties.</p>
+</header>
+
+<!-- Model legend -->
+<div class="legend">
+  <div class="legend-item"><div class="dot dot-ankh"></div> Ankh-base (768-dim)</div>
+  <div class="legend-item"><div class="dot dot-esm2"></div> ESM2-650M (1280-dim)</div>
+  <div class="legend-item"><div class="dot dot-prott5"></div> ProtT5-XL-UniRef50 (1024-dim)</div>
+  <div class="legend-item" style="color:#854d0e">★ Best in task</div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1 — DYNAMIC PROPERTIES                           -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title dynamic">
+    Dynamic Properties
+    <span class="badge-section">site-level classification</span>
+  </div>
+
+  <!-- ── Hyper-Ubiquitination ──────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Hyper-Ubiquitination (K-site)</h2>
+      <span class="task-type-badge badge-site">Site-level · Binary</span>
+      <span class="task-meta">930 positive K-sites · 15,730 negative · 15-residue context window</span>
+    </div>
+    <div class="model-cards">
+
+      <!-- Ankh -->
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · Hybrid (CenterPool + AttnPool) MLP</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.7634</span></div>
+          <div class="metric-chip">AUPRC <span>0.2326</span></div>
+          <div class="metric-chip">F1 <span>0.2843</span></div>
+        </div>
+        <a href="dynamic_properties/Claude_Agent_Hyper_Ubiquitination/results_ubiq_ankh/report_hyper_ubiq_ankh.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <!-- ESM2 -->
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Hybrid (CenterPool + AttnPool) MLP</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">AUROC <span>0.7849</span></div>
+          <div class="metric-chip">AUPRC <span>0.2250</span></div>
+          <div class="metric-chip">F1 <span>0.3110</span></div>
+        </div>
+        <a href="dynamic_properties/Claude_Agent_Hyper_Ubiquitination/results_ubiq_esm2/report_hyper_ubiq_esm2.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <!-- ProtT5 -->
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · Hybrid (CenterPool + AttnPool) MLP</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.7724</span></div>
+          <div class="metric-chip">AUPRC <span>0.2590</span></div>
+          <div class="metric-chip">F1 <span>0.2901</span></div>
+        </div>
+        <a href="dynamic_properties/Claude_Agent_Hyper_Ubiquitination/results_ubiq_prott5/report_hyper_ubiq_prott5.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Differential Phosphorylation EGFR / LUAD ────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Differential Phosphorylation — EGFR · NAT vs LUAD</h2>
+      <span class="task-type-badge badge-site">Site-level · Binary</span>
+      <span class="task-meta">2,189 EGFR-enriched sites · 1,844 null sites · 15-residue context window</span>
+    </div>
+    <div class="model-cards">
+
+      <!-- Ankh -->
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · Hybrid (CenterPool + AttnPool) MLP</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">AUROC <span>0.6164</span></div>
+          <div class="metric-chip">AUPRC <span>0.6474</span></div>
+          <div class="metric-chip">F1 <span>0.6141</span></div>
+        </div>
+        <a href="dynamic_properties/Claude_Agent_Phospho_EGFR_NAT_LUAD/results_phospho_EGFR/report_phospho_egfr_luad.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <!-- ESM2 -->
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Hybrid (CenterPool + AttnPool) MLP</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.5868</span></div>
+          <div class="metric-chip">AUPRC <span>0.6235</span></div>
+          <div class="metric-chip">F1 <span>0.6321</span></div>
+        </div>
+        <a href="dynamic_properties/Claude_Agent_Phospho_EGFR_NAT_LUAD/results_phospho_EGFR_ESM2/report_phospho_egfr_luad_esm2.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <!-- ProtT5 -->
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · AttnPool MLP</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.5967</span></div>
+          <div class="metric-chip">AUPRC <span>0.6361</span></div>
+          <div class="metric-chip">F1 <span>0.5917</span></div>
+        </div>
+        <a href="dynamic_properties/Claude_Agent_Phospho_EGFR_NAT_LUAD/results_phospho_EGFR_ProtT5/report_phospho_egfr_luad_prott5.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2 — STATIC PROPERTIES                            -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-title">
+    Static Properties
+    <span class="badge-section">protein-level classification</span>
+  </div>
+
+  <!-- ── DNA Binding ─────────────────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>DNA Binding Prediction</h2>
+      <span class="task-type-badge badge-binary">Binary</span>
+      <span class="task-meta">572 DNA-binding · 17,887 non-binding · UniProtKB Swiss-Prot</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · MLP + attention pooling · domain 21-mer windows</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.9770</span></div>
+          <div class="metric-chip">PR-AUC <span>0.9126</span></div>
+          <div class="metric-chip">MCC <span>0.8099</span></div>
+        </div>
+        <a href="static_properties/Claude Agent DNA_binding_prediction/results_dna_Ankh/interpretation_report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Logistic Regression + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.9733</span></div>
+          <div class="metric-chip">PR-AUC <span>0.8930</span></div>
+          <div class="metric-chip">MCC <span>0.8466</span></div>
+        </div>
+        <a href="static_properties/Claude Agent DNA_binding_prediction/results_dna_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + attention pooling · domain 21-mer windows</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.9771</span></div>
+          <div class="metric-chip">PR-AUC <span>0.8844</span></div>
+          <div class="metric-chip">MCC <span>0.8184</span></div>
+        </div>
+        <a href="static_properties/Claude Agent DNA_binding_prediction/results_dna_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Enzyme Classification ──────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Enzyme Classification</h2>
+      <span class="task-type-badge badge-multiclass">7-class (EC)</span>
+      <span class="task-meta">7 mutually exclusive EC classes · Swiss-Prot reviewed proteins</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.9212</span></div>
+          <div class="metric-chip">PR-AUC <span>0.8505</span></div>
+          <div class="metric-chip">Macro-F1 <span>0.9228</span></div>
+        </div>
+        <a href="static_properties/Claude Agent Enzyme_classification/results_enzyme_Ankh/interpretation_report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Logistic Regression + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.8899</span></div>
+          <div class="metric-chip">PR-AUC <span>0.8292</span></div>
+          <div class="metric-chip">Macro-F1 <span>0.8901</span></div>
+        </div>
+        <a href="static_properties/Claude Agent Enzyme_classification/results_enzyme_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.8946</span></div>
+          <div class="metric-chip">PR-AUC <span>0.8263</span></div>
+          <div class="metric-chip">Macro-F1 <span>0.8942</span></div>
+        </div>
+        <a href="static_properties/Claude Agent Enzyme_classification/results_enzyme_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Subcellular Localisation ───────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Subcellular Localisation</h2>
+      <span class="task-type-badge badge-multiclass">9-class</span>
+      <span class="task-meta">9 compartments · class-weighted loss · macro F1 primary metric</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">Accuracy <span>0.8227</span></div>
+          <div class="metric-chip">Macro-F1 <span>0.7105</span></div>
+          <div class="metric-chip">Wtd-F1 <span>0.8249</span></div>
+        </div>
+        <a href="static_properties/Claude Agent Sub_cellular_location/results_subcellular_Ankh/interpretation_report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">Accuracy <span>0.8180</span></div>
+          <div class="metric-chip">Macro-F1 <span>0.7212</span></div>
+          <div class="metric-chip">Wtd-F1 <span>0.8190</span></div>
+        </div>
+        <a href="static_properties/Claude Agent Sub_cellular_location/results_subcellular_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">Accuracy <span>0.8206</span></div>
+          <div class="metric-chip">Macro-F1 <span>0.7189</span></div>
+          <div class="metric-chip">Wtd-F1 <span>0.8271</span></div>
+        </div>
+        <a href="static_properties/Claude Agent Sub_cellular_location/results_subcellular_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Zinc Finger ─────────────────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Zinc Finger Prediction</h2>
+      <span class="task-type-badge badge-binary">Binary</span>
+      <span class="task-meta">Zinc-finger vs Non-zinc-finger · UniProtKB Swiss-Prot</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.9904</span></div>
+          <div class="metric-chip">PR-AUC <span>0.9406</span></div>
+          <div class="metric-chip">MCC <span>0.8668</span></div>
+        </div>
+        <a href="static_properties/zinc_finger_prediction/results_zinc_finger_Ankh/interpretation_report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Logistic Regression + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.9862</span></div>
+          <div class="metric-chip">PR-AUC <span>0.9409</span></div>
+          <div class="metric-chip">MCC <span>0.8619</span></div>
+        </div>
+        <a href="static_properties/zinc_finger_prediction/results_zinc_finger_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.9921</span></div>
+          <div class="metric-chip">PR-AUC <span>0.9545</span></div>
+          <div class="metric-chip">MCC <span>0.8573</span></div>
+        </div>
+        <a href="static_properties/zinc_finger_prediction/results_zinc_finger_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Glycosylation ───────────────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Glycosylation Prediction</h2>
+      <span class="task-type-badge badge-binary">Binary</span>
+      <span class="task-meta">~21.8% glycosylated proteins · UniProt/Swiss-Prot human proteome</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card na">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="na-text">Report not available</div>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.9695</span></div>
+          <div class="metric-chip">PR-AUC <span>0.9150</span></div>
+          <div class="metric-chip">F1 <span>0.8690</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Glycosylation/results_glycosylation_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.9765</span></div>
+          <div class="metric-chip">PR-AUC <span>0.9358</span></div>
+          <div class="metric-chip">F1 <span>0.8890</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Glycosylation/results_glycosylation_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Phosphorylation ────────────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Phosphorylation Prediction</h2>
+      <span class="task-type-badge badge-binary">Binary</span>
+      <span class="task-meta">~14.2% phosphorylated proteins · Swiss-Prot human proteome</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.7734</span></div>
+          <div class="metric-chip">PR-AUC <span>0.4360</span></div>
+          <div class="metric-chip">F1 <span>0.4657</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Phosphorylation/results_phosphorylation/interpretation_report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.7750</span></div>
+          <div class="metric-chip">PR-AUC <span>0.4533</span></div>
+          <div class="metric-chip">F1 <span>0.4488</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Phosphorylation/results_phosphorylation_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + max pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.7643</span></div>
+          <div class="metric-chip">PR-AUC <span>0.4543</span></div>
+          <div class="metric-chip">F1 <span>0.4517</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Phosphorylation/results_phosphorylation_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Ubiquitination (protein-level) ────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Ubiquitination Prediction</h2>
+      <span class="task-type-badge badge-binary">Binary</span>
+      <span class="task-meta">~7.4% ubiquitinated proteins · Swiss-Prot PTM column</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.7750</span></div>
+          <div class="metric-chip">PR-AUC <span>0.2891</span></div>
+          <div class="metric-chip">F1 <span>0.3325</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Ubiquitination/results_ubiquitination_Ankh/interpretation_report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.7613</span></div>
+          <div class="metric-chip">PR-AUC <span>0.2894</span></div>
+          <div class="metric-chip">F1 <span>0.3084</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Ubiquitination/results_ubiquitination_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.7604</span></div>
+          <div class="metric-chip">PR-AUC <span>0.2775</span></div>
+          <div class="metric-chip">F1 <span>0.3439</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_run_Ubiquitination/results_ubiquitination_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Acetylation ────────────────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Acetylation Prediction</h2>
+      <span class="task-type-badge badge-binary">Binary</span>
+      <span class="task-meta">~1.9% acetylated proteins · Swiss-Prot PTM column · highly imbalanced</span>
+    </div>
+    <div class="model-cards">
+
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.8132</span></div>
+          <div class="metric-chip">PR-AUC <span>0.2214</span></div>
+          <div class="metric-chip">F1 <span>0.2263</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_Acetylation/results_acetylation_Ankh/interpretation_report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.8146</span></div>
+          <div class="metric-chip">PR-AUC <span>0.2273</span></div>
+          <div class="metric-chip">F1 <span>0.2127</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_Acetylation/results_acetylation_ESM2/interpretation_report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · MLP + attention pooling</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.7959</span></div>
+          <div class="metric-chip">PR-AUC <span>0.1468</span></div>
+          <div class="metric-chip">F1 <span>0.1846</span></div>
+        </div>
+        <a href="static_properties/Claude_Agent_Acetylation/results_acetylation_ProtT5/interpretation_report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  Generated April 2026 · PLM Dynamic &amp; Static Property Prediction Project ·
+  <a href="https://github.com/facebookresearch/esm" style="color:#2563eb">ESM2</a> ·
+  <a href="https://github.com/agemagician/Ankh" style="color:#16a34a">Ankh</a> ·
+  <a href="https://github.com/agemagician/ProtTrans" style="color:#7c3aed">ProtT5</a>
+</footer>
+
+</body>
+</html>
