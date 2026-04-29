@@ -1,0 +1,52 @@
+nohup: ignoring input
+Using data from: /home/saishyam/Protein_dynamics/all_uniref
+Full dataset shape: (18459, 21)
+Zinc finger proteins:    (1732, 3)
+No zinc finger proteins: (16727, 3)
+Device: cuda
+Loading cached ANKH pooled embeddings...
+Loaded 18,459 max-pooled / 18,459 attn-pooled embeddings
+Zinc max: (1732, 768) | No-Zinc max: (16727, 768)
+Zinc attn: (1732, 768) | No-Zinc attn: (16727, 768)
+
+=== Max Pool ===
+  Train: 14767 (ZF=1386, Non-ZF=13381, frac=0.0939)
+  Test : 3692 (ZF=346, Non-ZF=3346, frac=0.0937)
+  Random PR-AUC baseline ≈ 0.0937
+
+=== Attention Pool ===
+  Train: 14767 (ZF=1386, Non-ZF=13381, frac=0.0939)
+  Test : 3692 (ZF=346, Non-ZF=3346, frac=0.0937)
+  Random PR-AUC baseline ≈ 0.0937
+
+Training Max Pool MLP...
+  Epoch 05 | Loss: 16.3879
+  Epoch 10 | Loss: 11.9107
+  Epoch 15 | Loss: 9.5875
+  Epoch 20 | Loss: 9.1096
+
+Training Attention Pool MLP...
+  Epoch 05 | Loss: 7.2807
+  Epoch 10 | Loss: 5.8877
+  Epoch 15 | Loss: 4.5036
+  Epoch 20 | Loss: 3.9029
+
+=== MLP Performance (Test Set) ===
+Max Pool     | ROC-AUC: 0.984 | PR-AUC: 0.9304
+Attention    | ROC-AUC: 0.989 | PR-AUC: 0.9446
+
+Running PCA, t-SNE, UMAP on attention-pooled embeddings...
+  PCA done
+  t-SNE done
+/home/saishyam/Protein_dynamics/esm2_env/lib64/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+  UMAP done
+Saved roc_curves.png, pr_curves.png
+Saved confusion_matrices.png
+Saved embedding_projection_pca_tsne_umap.png
+Saved summary_metrics.csv and summary_metrics.md
+Saved analysis_summary.txt
+
+All results written to: /home/saishyam/Protein_dynamics/zinc_finger_prediction/Clauge Agent Zinc finger/results_zinc_finger_Ankh
+  Ankh Max Pool: ROC-AUC=0.984, PR-AUC=0.9304, F1=0.87
+  Ankh Attention Pool: ROC-AUC=0.9886, PR-AUC=0.9446, F1=0.9022

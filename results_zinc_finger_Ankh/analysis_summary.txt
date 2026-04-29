@@ -1,0 +1,19 @@
+ANALYSIS SUMMARY — Ankh Zinc Finger Prediction
+================================================
+Best model by ROC-AUC: mlp + attn
+ROC-AUC   : 0.9904
+PR-AUC    : 0.9406
+F1 score  : 0.8788
+Accuracy  : 0.9762
+MCC       : 0.8668
+
+Dataset:
+  Zinc-finger proteins    : 1,732
+  Non-zinc-finger proteins: 16,727
+  Imbalance ratio         : ~1:9
+
+Interpretation:
+- ROC-AUC is the primary metric (class-agnostic ranking).
+- PR-AUC is secondary — critical for imbalanced binary tasks.
+- Ankh uses 768-dim embeddings (encoder-only, ankh-base).
+- Imbalance handled via BCEWithLogitsLoss pos_weight + LR class_weight=balanced.
