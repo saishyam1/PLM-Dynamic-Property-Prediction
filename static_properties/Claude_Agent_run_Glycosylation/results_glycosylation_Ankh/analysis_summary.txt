@@ -1,13 +1,14 @@
-ANALYSIS SUMMARY
-================
+ANALYSIS SUMMARY — Ankh Glycosylation
+======================================
 Best model by PR-AUC: mlp + attn
-ROC-AUC: 0.9748
-PR-AUC: 0.9228
+ROC-AUC  : 0.9748
+PR-AUC   : 0.9228
 Precision: 0.8265
-Recall: 0.9218
-F1: 0.8716
+Recall   : 0.9218
+F1       : 0.8716
 
 Interpretation:
-- PR-AUC is emphasized because classes are imbalanced.
-- Compare model/pooling trade-offs in summary_metrics.csv and PR/ROC plots.
-- Confusion matrices show threshold-0.5 operating behavior.
+- PR-AUC is emphasised because classes are imbalanced.
+- Ankh uses 768-dim embeddings (vs 1280 for ESM2, 1024 for ProtT5).
+- Attention pooling generally improves PR-AUC over max pooling.
+- Confusion matrices show threshold-0.5 operating behaviour.
