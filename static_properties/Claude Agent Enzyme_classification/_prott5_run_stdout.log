@@ -1,0 +1,23 @@
+Device: cuda
+CSV        : True  /home/saishyam/Protein_dynamics/Enzyme_classification/all_uniref_enz_label_clean_isoform_removed.csv
+Embed file : True  /nfs/turbo/umms-mcieslik/saishyam/Protein_dynamics/all_uniref/protT5_embedding_cache/pooled_embeddings.npz
+Results    : /home/saishyam/Protein_dynamics/Enzyme_classification/Claude Agent Enzyme_classification/results_enzyme_ProtT5
+Proteins with definitive EC label: 4319
+enzyme_label
+transferase       1735
+hydrolase         1598
+oxidoreductase     521
+isomerase          130
+ligase             119
+lyase              117
+translocase         99
+Missing embeddings: 8 proteins skipped
+Max-pool  : (4311, 1024)
+Attn-pool : (4311, 1024)
+              model pooling  accuracy  macro_f1  weighted_f1  n_test
+logistic_regression    attn  0.886443  0.813668     0.886280     863
+                mlp    attn  0.876014  0.800076     0.876926     863
+                mlp     max  0.856315  0.773632     0.857432     863
+logistic_regression     max  0.834299  0.767447     0.833287     863
+
+All results saved to: /home/saishyam/Protein_dynamics/Enzyme_classification/Claude Agent Enzyme_classification/results_enzyme_ProtT5

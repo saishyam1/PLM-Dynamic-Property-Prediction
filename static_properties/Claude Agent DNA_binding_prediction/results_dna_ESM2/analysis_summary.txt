@@ -1,0 +1,19 @@
+ANALYSIS SUMMARY — ESM2 DNA Binding Prediction
+================================================
+Best model by ROC-AUC: logistic_regression + attn
+ROC-AUC   : 0.9733
+PR-AUC    : 0.8930
+F1 score  : 0.8511
+Accuracy  : 0.9905
+MCC       : 0.8466
+
+Dataset:
+  DNA-binding proteins    : 572
+  Non-DNA-binding proteins: 17,887
+  Imbalance ratio         : ~1:31
+
+Interpretation:
+- ROC-AUC is the primary metric (class-agnostic ranking).
+- PR-AUC is secondary — critical for imbalanced binary tasks.
+- ESM2 uses 1280-dim embeddings.
+- Imbalance handled via BCEWithLogitsLoss pos_weight + LR class_weight=balanced.

@@ -1,0 +1,5 @@
+model,pooling,roc_auc,pr_auc,f1,accuracy,mcc,precision,recall,n_test
+mlp,attn,0.9771,0.8844,0.8235,0.9886,0.8184,0.7903,0.8596,3692
+logistic_regression,attn,0.9768,0.9011,0.8452,0.99,0.841,0.808,0.886,3692
+logistic_regression,max,0.9698,0.8892,0.8319,0.9892,0.8271,0.7984,0.8684,3692
+mlp,max,0.9665,0.8644,0.8097,0.9873,0.8057,0.7519,0.8772,3692

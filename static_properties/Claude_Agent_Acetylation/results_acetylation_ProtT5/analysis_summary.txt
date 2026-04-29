@@ -1,0 +1,20 @@
+ANALYSIS SUMMARY — ProtT5 Acetylation Prediction
+==================================================
+Best model by ROC-AUC: mlp + attn
+ROC-AUC   : 0.7959
+PR-AUC    : 0.1468
+F1 score  : 0.1699
+Accuracy  : 0.9179
+MCC       : 0.1846
+
+Dataset:
+  Acetylated proteins     : 354
+  Non-acetylated proteins : 18,105
+  Imbalance ratio         : ~1:51
+
+Interpretation:
+- ROC-AUC is the primary metric (class-agnostic ranking).
+- PR-AUC is secondary — critical for imbalanced binary tasks.
+- ProtT5 uses 1024-dim pooled protein language model embeddings.
+- Imbalance handled via BCEWithLogitsLoss pos_weight + LR class_weight=balanced.
+- Labels from UniProt 'Post-translational modification' free-text field.

@@ -1,0 +1,14 @@
+ANALYSIS SUMMARY — ProtT5 Glycosylation
+========================================
+Best model by PR-AUC: mlp + attn
+ROC-AUC  : 0.9765
+PR-AUC   : 0.9358
+Precision: 0.8741
+Recall   : 0.9045
+F1       : 0.8890
+
+Interpretation:
+- PR-AUC is emphasised because classes may be imbalanced.
+- ProtT5 uses 1024-dim embeddings (vs 1280 for ESM2, 768 for Ankh).
+- Label: Glycosylation column notna() = positive class.
+- UMAP projection included in addition to PCA / t-SNE.

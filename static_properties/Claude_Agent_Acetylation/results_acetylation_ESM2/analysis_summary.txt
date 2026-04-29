@@ -1,0 +1,20 @@
+ANALYSIS SUMMARY — ESM2 Acetylation Prediction
+==================================================
+Best model by ROC-AUC: mlp + attn
+ROC-AUC   : 0.8146
+PR-AUC    : 0.2273
+F1 score  : 0.2192
+Accuracy  : 0.9537
+MCC       : 0.2127
+
+Dataset:
+  Acetylated proteins     : 354
+  Non-acetylated proteins : 18,105
+  Imbalance ratio         : ~1:51
+
+Interpretation:
+- ROC-AUC is the primary metric (class-agnostic ranking).
+- PR-AUC is secondary — critical for imbalanced binary tasks.
+- ESM2 uses 1280-dim pooled protein language model embeddings.
+- Imbalance handled via BCEWithLogitsLoss pos_weight + LR class_weight=balanced.
+- Labels from UniProt 'Post-translational modification' free-text field.

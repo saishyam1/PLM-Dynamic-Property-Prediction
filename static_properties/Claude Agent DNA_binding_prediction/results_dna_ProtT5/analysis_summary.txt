@@ -1,0 +1,19 @@
+ANALYSIS SUMMARY — ProtT5 DNA Binding Prediction
+=================================================
+Best model by ROC-AUC: mlp + attn
+ROC-AUC   : 0.9771
+PR-AUC    : 0.8844
+F1 score  : 0.8235
+Accuracy  : 0.9886
+MCC       : 0.8184
+
+Dataset:
+  DNA-binding proteins    : 572
+  Non-DNA-binding proteins: 17,887
+  Imbalance ratio         : ~1:31
+
+Interpretation:
+- ROC-AUC is the primary metric (class-agnostic ranking).
+- PR-AUC is secondary — critical for imbalanced binary tasks.
+- ProtT5 uses 1024-dim embeddings.
+- Imbalance handled via BCEWithLogitsLoss pos_weight + LR class_weight=balanced.

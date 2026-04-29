@@ -1,0 +1,13 @@
+ANALYSIS SUMMARY
+================
+Best model by PR-AUC: mlp + attn
+ROC-AUC: 0.7734
+PR-AUC: 0.4360
+Precision: 0.4083
+Recall: 0.5418
+F1: 0.4657
+
+Interpretation:
+- PR-AUC is emphasized because classes are imbalanced.
+- Attention pooling generally improves PR-AUC compared with max pooling.
+- Confusion matrices show threshold-0.5 operating behavior.

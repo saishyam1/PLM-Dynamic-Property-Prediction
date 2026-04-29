@@ -1,0 +1,18 @@
+ANALYSIS SUMMARY
+================
+Best model by PR-AUC: mlp + attn
+ROC-AUC:   0.7750
+PR-AUC:    0.2891
+Precision: 0.2570
+Recall:    0.4708
+F1:        0.3325
+
+Dataset:
+  Ubiquitinated proteins     : 1369
+  Non-ubiquitinated proteins : 17090
+  Positive rate (test set)   : 0.0742
+
+Interpretation:
+- PR-AUC is emphasized because classes are imbalanced (~7% positive).
+- Compare model/pooling trade-offs in summary_metrics.csv and PR/ROC plots.
+- Confusion matrices show threshold-0.5 operating behavior.

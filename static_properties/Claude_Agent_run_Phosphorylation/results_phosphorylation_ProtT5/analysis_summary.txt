@@ -1,0 +1,15 @@
+ANALYSIS SUMMARY — ProtT5 Phosphorylation
+==========================================
+Best model by PR-AUC: mlp + max
+ROC-AUC  : 0.7643
+PR-AUC   : 0.4543
+Precision: 0.4588
+Recall   : 0.4449
+F1       : 0.4517
+
+Interpretation:
+- PR-AUC is emphasised because classes are imbalanced.
+- ProtT5 uses 1024-dim embeddings (vs 1280 for ESM2, 768 for Ankh).
+- Attention pooling generally improves PR-AUC over max pooling.
+- Confusion matrices show threshold-0.5 operating behaviour.
+- UMAP projection included in addition to PCA / t-SNE.

@@ -1,0 +1,20 @@
+ANALYSIS SUMMARY
+================
+Model : Ankh (768-dim embeddings)
+Task  : Multi-class subcellular localisation (9 classes)
+
+Best model by macro F1: mlp + attn
+Accuracy    : 0.8107
+Macro F1    : 0.7258
+Weighted F1 : 0.8132
+
+Dataset:
+  Total proteins with definitive labels: 9556
+  Number of classes: 9
+  Classes: cell_membrane, cytoplasm, endoplasmic_reticulum, extracellular, golgi, lysosome, mitochondrion, nucleus, peroxisome
+
+Interpretation:
+- Macro F1 is emphasised because classes are imbalanced.
+- Weighted F1 favours performance on majority classes.
+- Confusion matrices (normalised) reveal which compartments are confused.
+- Per-class metrics (MLP + attn) identify hard-to-classify compartments.

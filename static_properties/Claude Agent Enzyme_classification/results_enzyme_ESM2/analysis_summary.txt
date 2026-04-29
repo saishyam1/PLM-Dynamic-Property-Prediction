@@ -1,0 +1,39 @@
+ANALYSIS SUMMARY — ESM2 Enzyme Classification
+==============================================
+
+── Full-protein (pooled embeddings) ──────────────────
+  Best model by Macro F1: mlp + attn
+  Accuracy    : 0.8841
+  Macro F1    : 0.8029
+  Weighted F1 : 0.8832
+
+  All full-protein configs (sorted by Macro F1):
+    mlp                       | attn | Acc=0.8841  MacroF1=0.8029  WtdF1=0.8832
+    logistic_regression       | max  | Acc=0.8366  MacroF1=0.7633  WtdF1=0.8368
+    logistic_regression       | attn | Acc=0.8308  MacroF1=0.7396  WtdF1=0.8422
+    mlp                       | max  | Acc=0.4021  MacroF1=0.0819  WtdF1=0.2306
+
+── Active-site 15-mer window ─────────────────────────
+  Best model: MLP (attn pool, 15-mer windows)
+  Accuracy    : 0.9602
+  Macro F1    : 0.8731
+  Weighted F1 : 0.9602
+
+Interpretation:
+- Macro F1 is the primary metric (equal weight across all 7 EC classes).
+- ESM2 uses 1280-dim embeddings.
+- 7-class EC classification: oxidoreductase, transferase, hydrolase,
+  lyase, isomerase, ligase, translocase.
+- Confusion matrices are row-normalised (recall per class).
+
+  Per-class (n_test_windows=1632):
+  EC Class              Precision   Recall       F1
+  --------------------  ---------  -------  -------
+  hydrolase                0.8738   0.9791   0.9235
+  isomerase                0.7000   0.7000   0.7000
+  ligase                   0.8000   1.0000   0.8889
+  lyase                    0.8571   0.5455   0.6667
+  non_catalytic            0.9851   0.9698   0.9774
+  oxidoreductase           0.9000   0.9231   0.9114
+  transferase              0.9236   0.9110   0.9172
+  translocase              1.0000   1.0000   1.0000

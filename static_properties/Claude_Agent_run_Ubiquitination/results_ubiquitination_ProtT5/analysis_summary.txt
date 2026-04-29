@@ -1,0 +1,20 @@
+ANALYSIS SUMMARY — ProtT5 Ubiquitination
+========================================
+Best model by PR-AUC: mlp + attn
+ROC-AUC  : 0.7604
+PR-AUC   : 0.2775
+Precision: 0.2759
+Recall   : 0.4562
+F1       : 0.3439
+
+Dataset:
+  Ubiquitinated proteins     : 1369
+  Non-ubiquitinated proteins : 17090
+  Positive rate (test set)   : 0.0742
+
+Interpretation:
+- PR-AUC is emphasised because classes are imbalanced (~7% positive).
+- ProtT5 uses 1024-dim embeddings (vs 1280 for ESM2, 768 for Ankh).
+- UMAP projection included in addition to PCA / t-SNE.
+- Compare results_ubiquitination_ProtT5/, results_ubiquitination_ESM2/,
+  and results_ubiquitination_Ankh/ for a three-way model comparison.

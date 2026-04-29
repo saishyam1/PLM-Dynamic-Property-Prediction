@@ -1,0 +1,25 @@
+Device: cuda
+CSV        : True  /home/saishyam/Protein_dynamics/Enzyme_classification/all_uniref_enz_label_clean_isoform_removed.csv
+Embed file : True  /home/saishyam/Protein_dynamics/all_uniref/ankh_embedding_cache/pooled_embeddings.npz
+Results    : /home/saishyam/Protein_dynamics/Enzyme_classification/Claude Agent Enzyme_classification/results_enzyme_Ankh
+Proteins with definitive EC label: 4319
+enzyme_label
+transferase       1735
+hydrolase         1598
+oxidoreductase     521
+isomerase          130
+ligase             119
+lyase              117
+translocase         99
+Missing embeddings: 8 proteins skipped
+Max-pool  : (4311, 768)
+Attn-pool : (4311, 768)
+/home/saishyam/Protein_dynamics/esm2_env/lib64/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+              model pooling  accuracy  macro_f1  weighted_f1  n_test
+logistic_regression    attn  0.896871  0.824757     0.897187     863
+                mlp    attn  0.911935  0.823292     0.913785     863
+                mlp     max  0.849363  0.774105     0.851573     863
+logistic_regression     max  0.774044  0.686467     0.774976     863
+
+All results saved to: /home/saishyam/Protein_dynamics/Enzyme_classification/Claude Agent Enzyme_classification/results_enzyme_Ankh

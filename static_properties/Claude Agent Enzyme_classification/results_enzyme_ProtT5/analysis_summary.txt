@@ -1,0 +1,39 @@
+ANALYSIS SUMMARY — ProtT5 Enzyme Classification
+=================================================
+
+── Full-protein (pooled embeddings) ──────────────────
+  Best model by Macro F1: logistic_regression + attn
+  Accuracy    : 0.8864
+  Macro F1    : 0.8137
+  Weighted F1 : 0.8863
+
+  All full-protein configs (sorted by Macro F1):
+    logistic_regression       | attn | Acc=0.8864  MacroF1=0.8137  WtdF1=0.8863
+    mlp                       | max  | Acc=0.8621  MacroF1=0.7883  WtdF1=0.8615
+    mlp                       | attn | Acc=0.8691  MacroF1=0.7863  WtdF1=0.8758
+    logistic_regression       | max  | Acc=0.8320  MacroF1=0.7666  WtdF1=0.8310
+
+── Active-site 15-mer window ─────────────────────────
+  Best model: MLP (attn pool, 15-mer windows)
+  Accuracy    : 0.9540
+  Macro F1    : 0.8469
+  Weighted F1 : 0.9553
+
+Interpretation:
+- Macro F1 is the primary metric (equal weight across all 7 EC classes).
+- ProtT5 uses 1024-dim embeddings.
+- 7-class EC classification: oxidoreductase, transferase, hydrolase,
+  lyase, isomerase, ligase, translocase.
+- Confusion matrices are row-normalised (recall per class).
+
+  Per-class (n_test_windows=1632):
+  EC Class              Precision   Recall       F1
+  --------------------  ---------  -------  -------
+  hydrolase                0.9050   0.9476   0.9258
+  isomerase                0.8889   0.8000   0.8421
+  ligase                   0.4444   1.0000   0.6154
+  lyase                    0.8750   0.6364   0.7368
+  non_catalytic            0.9858   0.9657   0.9757
+  oxidoreductase           0.6863   0.8974   0.7778
+  transferase              0.8926   0.9110   0.9017
+  translocase              1.0000   1.0000   1.0000

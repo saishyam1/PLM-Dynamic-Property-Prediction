@@ -1,0 +1,39 @@
+ANALYSIS SUMMARY — Ankh Enzyme Classification
+==============================================
+
+── Full-protein (pooled embeddings) ──────────────────
+  Best model by Macro F1: mlp + attn
+  Accuracy    : 0.8957
+  Macro F1    : 0.8096
+  Weighted F1 : 0.9001
+
+  All full-protein configs (sorted by Macro F1):
+    mlp                       | attn | Acc=0.8957  MacroF1=0.8096  WtdF1=0.9001
+    logistic_regression       | max  | Acc=0.7740  MacroF1=0.6756  WtdF1=0.7848
+    logistic_regression       | attn | Acc=0.7509  MacroF1=0.6752  WtdF1=0.7747
+    mlp                       | max  | Acc=0.4705  MacroF1=0.2081  WtdF1=0.4039
+
+── Active-site 15-mer window ─────────────────────────
+  Best model: MLP (attn pool, 15-mer windows)
+  Accuracy    : 0.9136
+  Macro F1    : 0.8557
+  Weighted F1 : 0.9171
+
+Interpretation:
+- Macro F1 is the primary metric (equal weight across all 7 EC classes).
+- Ankh uses 768-dim embeddings.
+- 7-class EC classification: oxidoreductase, transferase, hydrolase,
+  lyase, isomerase, ligase, translocase.
+- Confusion matrices are row-normalised (recall per class).
+
+  Per-class (n_test_windows=1632):
+  EC Class              Precision   Recall       F1
+  --------------------  ---------  -------  -------
+  hydrolase                0.6803   0.9581   0.7957
+  isomerase                1.0000   0.7000   0.8235
+  ligase                   1.0000   1.0000   1.0000
+  lyase                    0.6667   0.5455   0.6000
+  non_catalytic            0.9800   0.9191   0.9486
+  oxidoreductase           0.7857   0.8462   0.8148
+  transferase              0.8630   0.8630   0.8630
+  translocase              1.0000   1.0000   1.0000

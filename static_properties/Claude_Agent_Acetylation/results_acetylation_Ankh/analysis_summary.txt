@@ -1,0 +1,20 @@
+ANALYSIS SUMMARY — Ankh Acetylation Prediction
+==================================================
+Best model by ROC-AUC: mlp + attn
+ROC-AUC   : 0.8132
+PR-AUC    : 0.2214
+F1 score  : 0.2222
+Accuracy  : 0.9450
+MCC       : 0.2263
+
+Dataset:
+  Acetylated proteins     : 354
+  Non-acetylated proteins : 18,105
+  Imbalance ratio         : ~1:51
+
+Interpretation:
+- ROC-AUC is the primary metric (class-agnostic ranking).
+- PR-AUC is secondary — critical for imbalanced binary tasks.
+- Ankh uses 768-dim pooled protein language model embeddings.
+- Imbalance handled via BCEWithLogitsLoss pos_weight + LR class_weight=balanced.
+- Labels from UniProt 'Post-translational modification' free-text field.

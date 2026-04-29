@@ -1,0 +1,75 @@
+nohup: ignoring input
+Device: cuda
+CSV        : True  /home/saishyam/Protein_dynamics/Enzyme_classification/all_uniref_enz_label_clean_isoform_removed.csv
+Embed file : True  /nfs/turbo/umms-mcieslik/saishyam/Protein_dynamics/all_uniref/protT5_embedding_cache/pooled_embeddings.npz
+Results    : /home/saishyam/Protein_dynamics/Enzyme_classification/Claude Agent Enzyme_classification/results_enzyme_ProtT5
+Loaded CSV: (18431, 36)
+Proteins with definitive EC label: 4319
+enzyme_label
+transferase       1735
+hydrolase         1598
+oxidoreductase     521
+isomerase          130
+ligase             119
+lyase              117
+translocase         99
+Saved: class_distribution.png
+Loading ProtT5 embeddings…
+Loaded in 1.4s
+Missing embeddings: 8 proteins skipped
+Max-pool  : (4311, 1024)
+Attn-pool : (4311, 1024)
+Classes (7): ['hydrolase' 'isomerase' 'ligase' 'lyase' 'oxidoreductase' 'transferase'
+ 'translocase']
+LR  | max   acc=0.8343  macro_f1=0.7674  wt_f1=0.8333
+LR  | attn  acc=0.8864  macro_f1=0.8137  wt_f1=0.8863
+Training MLP | max…
+  Epoch 10 loss=0.0300
+  Epoch 20 loss=0.2486
+  Epoch 30 loss=0.0040
+MLP | max   acc=0.8563  macro_f1=0.7736  wt_f1=0.8574
+Training MLP | attn…
+  Epoch 10 loss=0.0913
+  Epoch 20 loss=0.0653
+  Epoch 30 loss=0.0999
+MLP | attn  acc=0.8760  macro_f1=0.8001  wt_f1=0.8769
+                 model pooling  accuracy  macro_f1  weighted_f1  n_test
+0  logistic_regression    attn  0.886443  0.813668     0.886280     863
+1                  mlp    attn  0.876014  0.800076     0.876926     863
+2                  mlp     max  0.856315  0.773632     0.857432     863
+3  logistic_regression     max  0.834299  0.767447     0.833287     863
+Saved: summary_metrics.csv  summary_metrics.md
+Saved: confusion_matrices.png
+Saved: per_class_metrics.png
+Saved: mlp_training_loss.png
+Running PCA…
+Running t-SNE…
+Running UMAP…
+/home/saishyam/Protein_dynamics/esm2_env/lib64/python3.12/site-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+Saved: embedding_projection_pca_tsne_umap.png
+ANALYSIS SUMMARY
+================
+Model : ProtT5 (1024-dim embeddings)
+Task  : Multi-class enzyme classification (7 EC classes)
+
+Best model by macro F1: logistic_regression + attn
+Accuracy    : 0.8864
+Macro F1    : 0.8137
+Weighted F1 : 0.8863
+
+Dataset:
+  Total proteins with definitive EC label: 4319
+  Number of classes: 7
+  Classes: hydrolase, isomerase, ligase, lyase, oxidoreductase, transferase, translocase
+
+Interpretation:
+- Macro F1 is emphasised because classes are imbalanced (hydrolase/transferase dominate).
+- Weighted F1 favours majority class performance.
+- Confusion matrices reveal confusions between biochemically similar EC classes.
+- Per-class metrics (MLP + attn) identify hard-to-classify enzyme types.
+
+Saved: analysis_summary.txt
+Saved: interpretation_report.html
+
+All results saved to: /home/saishyam/Protein_dynamics/Enzyme_classification/Claude Agent Enzyme_classification/results_enzyme_ProtT5
