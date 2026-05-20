@@ -1,0 +1,3 @@
+pool,model,embedding_dim,n_proteins_ml,n_tissues,n_tissues_evaluated,train_size,test_size,macro_roc_auc,macro_pr_auc,epochs,batch_size,lr
+max,ESM2 + MLP,1280,13081,235,235,10464,2617,0.7947924564801367,0.2765251423859458,40,64,0.001
+attn,ESM2 + MLP,1280,13081,235,235,10464,2617,0.8172699269690156,0.3299515731803072,40,64,0.001

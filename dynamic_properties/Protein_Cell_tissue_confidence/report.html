@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tissue Enrichment Prediction — Ankh · ESM2 · ProtT5</title>
+  <style>
+    /* ── Reset & base ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f4f6f9;
+      color: #1e293b;
+      line-height: 1.65;
+    }
+
+    /* ── Top header ─────────────────────────────────────────── */
+    .site-header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f2a47 100%);
+      color: #fff;
+      padding: 2.5rem 2rem 1.8rem;
+      text-align: center;
+      position: relative;
+    }
+    .site-header .back-link {
+      position: absolute;
+      top: 1.2rem; left: 1.5rem;
+      font-size: 0.82rem;
+      color: #94b8d8;
+      text-decoration: none;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .site-header .back-link:hover { color: #fff; }
+    .site-header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.45rem; }
+    .site-header p  { font-size: 0.95rem; color: #94b8d8; max-width: 760px; margin: 0 auto 1rem; }
+    .header-chips {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 0.8rem;
+    }
+    .hchip {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      border-radius: 20px; padding: 3px 12px; font-size: 0.78rem; color: #dbeafe;
+    }
+
+    /* ── Sticky nav ─────────────────────────────────────────── */
+    .sticky-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: #fff;
+      border-bottom: 2px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      display: flex; overflow-x: auto;
+    }
+    .sticky-nav a {
+      flex-shrink: 0; padding: 0.75rem 1.4rem;
+      font-size: 0.82rem; font-weight: 600;
+      color: #64748b; text-decoration: none;
+      border-bottom: 3px solid transparent;
+      transition: color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .sticky-nav a:hover { color: #1e3a5f; }
+    .sticky-nav a.active { color: #1d4ed8; border-bottom-color: #1d4ed8; }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* ── Section headings ───────────────────────────────────── */
+    .section-heading {
+      font-size: 1.3rem; font-weight: 700; color: #0f2a47;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 0.4rem; margin: 2.8rem 0 1.6rem;
+      display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    }
+    .section-heading .tag {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 2px 8px; border-radius: 20px;
+      background: #dbeafe; color: #1d4ed8;
+    }
+
+    /* ── Overview cards ─────────────────────────────────────── */
+    .overview-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .ocard {
+      background: #fff; border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      padding: 1.1rem 1.3rem;
+      text-align: center;
+    }
+    .ocard .onum { font-size: 1.6rem; font-weight: 700; color: #1e3a5f; }
+    .ocard .olabel { font-size: 0.78rem; color: #64748b; margin-top: 0.2rem; }
+
+    /* ── Model tabs ─────────────────────────────────────────── */
+    .model-tabs {
+      display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 0;
+    }
+    .model-tab-btn {
+      padding: 0.6rem 1.4rem; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; border: none; background: transparent;
+      border-bottom: 3px solid transparent; margin-bottom: -2px;
+      color: #64748b; transition: color .15s, border-color .15s;
+    }
+    .model-tab-btn:hover { color: #1e293b; }
+    .model-tab-btn.active-ankh   { color: #16a34a; border-bottom-color: #16a34a; }
+    .model-tab-btn.active-esm2   { color: #2563eb; border-bottom-color: #2563eb; }
+    .model-tab-btn.active-prott5 { color: #7c3aed; border-bottom-color: #7c3aed; }
+    .model-tab-pane { display: none; }
+    .model-tab-pane.active { display: block; }
+
+    /* ── Summary comparison table ───────────────────────────── */
+    .comparison-wrap {
+      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      overflow: hidden; margin-bottom: 2rem;
+    }
+    table.comp-table {
+      width: 100%; border-collapse: collapse; font-size: 0.85rem;
+    }
+    table.comp-table thead tr { background: #1e3a5f; color: #fff; }
+    table.comp-table thead th { padding: 0.75rem 1rem; text-align: center; font-weight: 600; }
+    table.comp-table thead th:first-child { text-align: left; }
+    table.comp-table tbody tr:nth-child(even) { background: #f8fafc; }
+    table.comp-table tbody td { padding: 0.6rem 1rem; text-align: center; border-bottom: 1px solid #f1f5f9; }
+    table.comp-table tbody td:first-child { text-align: left; font-weight: 600; color: #475569; font-size: 0.8rem; }
+    .badge-val {
+      display: inline-block; padding: 2px 8px; border-radius: 6px;
+      font-weight: 700; font-size: 0.82rem;
+    }
+    .bv-ankh   { background: #dcfce7; color: #15803d; }
+    .bv-esm2   { background: #dbeafe; color: #1d4ed8; }
+    .bv-prott5 { background: #ede9fe; color: #6d28d9; }
+    .bv-best   { background: #fef9c3; color: #854d0e; position: relative; }
+    .bv-best::after { content: " ★"; font-size: 0.72rem; color: #d97706; }
+
+    /* ── Per-label metric table ─────────────────────────────── */
+    .metric-table-wrap {
+      background: #fff; border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      overflow: auto; margin-bottom: 2rem;
+    }
+    table.met { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    table.met thead tr { background: #0f2a47; color: #fff; }
+    table.met thead th { padding: 0.7rem 0.9rem; text-align: center; font-weight: 600; white-space: nowrap; }
+    table.met thead th:first-child { text-align: left; }
+    table.met tbody tr:hover { background: #f1f5f9; }
+    table.met tbody td { padding: 0.55rem 0.9rem; border-bottom: 1px solid #f1f5f9; text-align: center; }
+    table.met tbody td:first-child { text-align: left; font-weight: 600; }
+    table.met .sub { font-size: 0.72rem; color: #94a3b8; display: block; }
+    .auc-hi  { color: #15803d; font-weight: 700; }
+    .auc-mid { color: #b45309; }
+    .best-cell { background: #fef9c3; }
+
+    /* ── Plot panels ─────────────────────────────────────────── */
+    .plot-section {
+      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05); overflow: hidden; margin-bottom: 2rem;
+    }
+    .plot-section-header {
+      padding: 0.8rem 1.2rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .plot-section-header h3 { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+    .plot-section-body { padding: 1.2rem; }
+
+    .model-pill {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 2px 9px; border-radius: 20px;
+    }
+    .pill-ankh   { background: #dcfce7; color: #15803d; }
+    .pill-esm2   { background: #dbeafe; color: #1d4ed8; }
+    .pill-prott5 { background: #ede9fe; color: #6d28d9; }
+
+    /* figure grids */
+    .fig-row { display: grid; gap: 1rem; margin-bottom: 1rem; }
+    .fig-row.cols-1 { grid-template-columns: 1fr; }
+    .fig-row.cols-2 { grid-template-columns: 1fr 1fr; }
+    .fig-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    figure.fig-card {
+      margin: 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;
+      background: #fafafa;
+    }
+    figure.fig-card img { width: 100%; display: block; }
+    figure.fig-card figcaption {
+      padding: 0.45rem 0.7rem; font-size: 0.74rem; color: #64748b;
+      background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;
+    }
+
+    /* lightbox */
+    figure.fig-card img { cursor: zoom-in; }
+    #lightbox {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85);
+      z-index: 9999; justify-content: center; align-items: center;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 95vw; max-height: 92vh; border-radius: 6px; box-shadow: 0 8px 40px rgba(0,0,0,.6); }
+    #lightbox-close {
+      position: fixed; top: 1rem; right: 1.5rem; font-size: 2rem; color: #fff;
+      cursor: pointer; line-height: 1; opacity: 0.8; background: none; border: none;
+    }
+    #lightbox-close:hover { opacity: 1; }
+
+    /* ── Callout boxes ──────────────────────────────────────── */
+    .callout {
+      border-left: 4px solid; border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.85rem;
+    }
+    .callout-blue  { border-color: #3b82f6; background: #eff6ff; color: #1e40af; }
+    .callout-green { border-color: #16a34a; background: #f0fdf4; color: #14532d; }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    footer {
+      text-align: center; font-size: 0.78rem; color: #94a3b8;
+      padding: 1.5rem; border-top: 1px solid #e2e8f0; margin-top: 2rem;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .fig-row.cols-2, .fig-row.cols-3 { grid-template-columns: 1fr; }
+      .site-header h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- HEADER                                                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <a class="back-link" href="../../index.html">← Back to Index</a>
+  <h1>Protein Tissue Enrichment Prediction</h1>
+  <p>Multi-label tissue enrichment classifier benchmarking Ankh, ESM2, and ProtT5 protein language models across 235 tissues and a focused 5-label task.</p>
+  <div class="header-chips">
+    <span class="hchip">13,081 proteins</span>
+    <span class="hchip">235 tissues · TISSUES DB</span>
+    <span class="hchip">Multi-label MLP</span>
+    <span class="hchip">Attn-pool + Max-pool</span>
+    <span class="hchip">5-label focused: Brain · Testis · Lung · Liver · Kidney</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- STICKY NAV                                                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<nav class="sticky-nav">
+  <a href="#overview">Overview</a>
+  <a href="#dataset">Dataset</a>
+  <a href="#comparison">Model Comparison</a>
+  <a href="#task235">235-Tissue Task</a>
+  <a href="#task5label">5-Label Task</a>
+  <a href="#plots-ankh">Ankh Plots</a>
+  <a href="#plots-esm2">ESM2 Plots</a>
+  <a href="#plots-prott5">ProtT5 Plots</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT                                                -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="container">
+
+  <!-- ─────────────────────────────────────────── OVERVIEW ── -->
+  <div id="overview" class="section-heading">
+    Dataset &amp; Experimental Overview
+    <span class="tag">Setup</span>
+  </div>
+
+  <div class="overview-grid">
+    <div class="ocard"><div class="onum">13,081</div><div class="olabel">Unique proteins (after dedup)</div></div>
+    <div class="ocard"><div class="onum">235</div><div class="olabel">Tissues (≥10 positive proteins)</div></div>
+    <div class="ocard"><div class="onum">80 / 20</div><div class="olabel">Train / Test split (235-task)</div></div>
+    <div class="ocard"><div class="onum">70 / 10 / 20</div><div class="olabel">Train / Val / Test split (5-label)</div></div>
+    <div class="ocard"><div class="onum">3</div><div class="olabel">PLM models benchmarked</div></div>
+    <div class="ocard"><div class="onum">5</div><div class="olabel">Focused tissues (Brain · Testis · Lung · Liver · Kidney)</div></div>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>Task design:</strong> Protein representations are extracted from pre-computed pooled embeddings (both max-pool and attention-pool variants). A shared-backbone MLP (dim→512→256→num_tissues) is trained with class-weighted BCE loss. For the focused 5-label task, a lighter FocusedMLP (dim→128→5) is trained with label smoothing, AdamW, and early stopping.
+  </div>
+
+  <!-- ──────────────────────────────────────── DATASET ── -->
+  <div id="dataset" class="section-heading">
+    TISSUES Experimental Tissue Protein Expression Evidence Scores 2025
+    <span class="tag">Source Dataset</span>
+  </div>
+
+  <!-- Top metadata row -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem;">
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Resource</div>
+      <div style="font-size:1rem;font-weight:700;color:#1e3a5f;">TISSUES</div>
+      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Experimental proteomics integration</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Genes in dataset</div>
+      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">14,532</div>
+      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Human genes with expression evidence</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Cell types / Tissues</div>
+      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">218</div>
+      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Unique tissue / cell-type categories</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Associations</div>
+      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">268,646</div>
+      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Gene–tissue association pairs</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Last Updated</div>
+      <div style="font-size:1rem;font-weight:700;color:#1e3a5f;">2025 Apr 23</div>
+      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Latest release used in this study</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Data used</div>
+      <div style="font-size:.95rem;font-weight:700;color:#1e3a5f;">Gene-attribute matrix</div>
+      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Binary enrichment scores per gene × tissue</div>
+    </div>
+  </div>
+
+  <!-- Description card -->
+  <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow:hidden;margin-bottom:1.5rem;">
+    <div style="padding:.8rem 1.2rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;">
+      <span style="font-size:.95rem;font-weight:700;color:#1e293b;">Dataset Description</span>
+    </div>
+    <div style="padding:1.1rem 1.3rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+      <div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">Description</div>
+        <div style="font-size:.85rem;color:#475569;">Protein tissue expression evidence scores by integrating experimental data from proteomics studies across mammalian tissues.</div>
+      </div>
+      <div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">Measurement</div>
+        <div style="font-size:.85rem;color:#475569;">Association by data aggregation — evidence scores derived from multiple experimental proteomics sources.</div>
+      </div>
+      <div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">Association type</div>
+        <div style="font-size:.85rem;color:#475569;">Protein–tissue associations integrating evidence from experimental studies (mass spectrometry, antibody-based proteomics, etc.).</div>
+      </div>
+      <div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">Category</div>
+        <div style="font-size:.85rem;color:#475569;">Proteomics · experimental evidence · tissue specificity</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Citation + processing note -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;">
+    <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:1rem 1.2rem;">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#b45309;margin-bottom:.4rem;">Citation</div>
+      <div style="font-size:.82rem;color:#78350f;line-height:1.55;">
+        Palasca D, et al. (2018) <em>TISSUES 2.0: an integrative web resource on mammalian tissue expression.</em> <strong>Database</strong>. 2018:bay003.
+      </div>
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:1rem 1.2rem;">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#15803d;margin-bottom:.4rem;">Preprocessing in this study</div>
+      <div style="font-size:.82rem;color:#14532d;line-height:1.55;">
+        Downloaded the <strong>gene-attribute matrix</strong> (218 tissues × 14,532 genes). Mapped Ensembl protein IDs to UniProt accessions, removed tissues with &lt;10 positive proteins, yielding <strong>235 tissue labels</strong> × <strong>13,081 proteins</strong> for model training.
+      </div>
+    </div>
+  </div>
+
+  <!-- Tissue categories sample table -->
+  <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow:hidden;margin-bottom:2rem;">
+    <div style="padding:.8rem 1.2rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:.95rem;font-weight:700;color:#1e293b;">Sample of 218 Tissue / Cell-type Gene Sets</span>
+      <span style="font-size:.75rem;color:#94a3b8;">from TISSUES 2025 dataset</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+        <thead>
+          <tr style="background:#0f2a47;color:#fff;">
+            <th style="padding:.6rem 1rem;text-align:left;font-weight:600;">Gene Set (Tissue / Cell type)</th>
+            <th style="padding:.6rem 1rem;text-align:left;font-weight:600;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Abdomen</td><td style="padding:.5rem 1rem;color:#475569;">The part of the body between the thorax and the pelvis; also contains the chief viscera.</td></tr>
+          <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Adipose tissue</td><td style="padding:.5rem 1rem;color:#475569;">Connective tissue in which fat is stored and which has the cells distended by droplets of fat.</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Adrenal cortex</td><td style="padding:.5rem 1rem;color:#475569;">The outer portion of the adrenal glands that produces several steroid hormones, including cortisol and aldosterone.</td></tr>
+          <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Amygdala</td><td style="padding:.5rem 1rem;color:#475569;">Almond-shaped mass of gray matter in the anterior extremity of the temporal lobe; part of the limbic system.</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">B-lymphocyte</td><td style="padding:.5rem 1rem;color:#475569;">Lymphocytes with surface antibody molecules; comprise antibody-secreting plasma cells when mature.</td></tr>
+          <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Blood</td><td style="padding:.5rem 1rem;color:#475569;">The fluid circulating in the heart, arteries, capillaries, and veins carrying nourishment and oxygen.</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Blood plasma</td><td style="padding:.5rem 1rem;color:#475569;">The fluid portion of the blood in which the particulate components are suspended.</td></tr>
+          <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Brain</td><td style="padding:.5rem 1rem;color:#475569;">The portion of the vertebrate central nervous system enclosed in the skull; one of the 5 focused labels in this study.</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Kidney</td><td style="padding:.5rem 1rem;color:#475569;">Either of a pair of vertebrate organs that excrete nitrogenous waste; one of the 5 focused labels in this study.</td></tr>
+          <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Liver</td><td style="padding:.5rem 1rem;color:#475569;">A large glandular organ of vertebrates that secretes bile and plays key metabolic roles; one of the 5 focused labels.</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Lung</td><td style="padding:.5rem 1rem;color:#475569;">Primary organs for gas exchange in tetrapods; one of the 5 focused labels in this study.</td></tr>
+          <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Testis</td><td style="padding:.5rem 1rem;color:#475569;">Male reproductive gland; shows high tissue-specific protein expression; one of the 5 focused labels.</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Cardiac muscle</td><td style="padding:.5rem 1rem;color:#475569;">The involuntary striated muscle tissue of the heart.</td></tr>
+          <tr style="background:#f8fafc;border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Skeletal muscle</td><td style="padding:.5rem 1rem;color:#475569;">Voluntary striated muscle attached to the skeleton; responsible for locomotion.</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;">Pancreatic islet</td><td style="padding:.5rem 1rem;color:#475569;">Clusters of endocrine cells in the pancreas responsible for insulin and glucagon secretion.</td></tr>
+          <tr style="background:#f8fafc;"><td style="padding:.5rem 1rem;font-weight:600;color:#1e3a5f;font-style:italic;">… + 203 more tissues &amp; cell types</td><td style="padding:.5rem 1rem;color:#94a3b8;font-style:italic;">Full list of 218 gene sets available from TISSUES 2025 resource</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Model info cards ──────────────────────────────────── -->
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; margin-bottom:2rem;">
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:1.1rem 1.3rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;">
+        <span class="model-pill pill-ankh">Ankh</span>
+        <span style="font-size:.75rem;color:#64748b;">768-dim</span>
+      </div>
+      <div style="font-size:.82rem;color:#475569;">Ankh-base protein LM. Local embeddings stored at <code>ankh_embedding_cache/pooled_embeddings.npz</code>. Training: 40 epochs, batch 64, lr 1e-3, cosine LR decay.</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:1.1rem 1.3rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;">
+        <span class="model-pill pill-esm2">ESM2</span>
+        <span style="font-size:.75rem;color:#64748b;">1280-dim</span>
+      </div>
+      <div style="font-size:.82rem;color:#475569;">ESM2-650M (fair-esm). Embeddings from <code>esm2_embedding_cache/pooled_embeddings.npz</code> on NFS. Training: 40 epochs, batch 64, lr 1e-3, cosine LR decay.</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:1.1rem 1.3rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;">
+        <span class="model-pill pill-prott5">ProtT5</span>
+        <span style="font-size:.75rem;color:#64748b;">1024-dim</span>
+      </div>
+      <div style="font-size:.82rem;color:#475569;">ProtT5-XL-UniRef50. Embeddings from <code>protT5_embedding_cache/pooled_embeddings.npz</code> on NFS. Training: 40 epochs, batch 64, lr 1e-3, cosine LR decay.</div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────────── MODEL COMPARISON ── -->
+  <div id="comparison" class="section-heading">
+    Model Comparison Summary
+    <span class="tag">All tasks · attn-pool</span>
+  </div>
+
+  <div class="comparison-wrap">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Metric / Task</th>
+          <th>Ankh · 768-dim</th>
+          <th>ESM2 · 1280-dim</th>
+          <th>ProtT5 · 1024-dim</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>235-Tissue Macro ROC-AUC <span class="sub">Attn-pool</span></td>
+          <td><span class="badge-val bv-ankh">0.7920</span></td>
+          <td><span class="badge-val bv-best">0.8173</span></td>
+          <td><span class="badge-val bv-prott5">0.7968</span></td>
+        </tr>
+        <tr>
+          <td>235-Tissue Macro PR-AUC <span class="sub">Attn-pool</span></td>
+          <td><span class="badge-val bv-ankh">0.2650</span></td>
+          <td><span class="badge-val bv-esm2">0.3300</span></td>
+          <td><span class="badge-val bv-best">0.3383</span></td>
+        </tr>
+        <tr>
+          <td>5-Label Macro ROC-AUC <span class="sub">Test set</span></td>
+          <td><span class="badge-val bv-ankh">0.7332</span></td>
+          <td><span class="badge-val bv-esm2">0.7554</span></td>
+          <td><span class="badge-val bv-best">0.7657</span></td>
+        </tr>
+        <tr>
+          <td>5-Label Macro PR-AUC <span class="sub">Test set</span></td>
+          <td><span class="badge-val bv-ankh">0.4832</span></td>
+          <td><span class="badge-val bv-esm2">0.5247</span></td>
+          <td><span class="badge-val bv-best">0.5664</span></td>
+        </tr>
+        <tr>
+          <td>Brain ROC-AUC</td>
+          <td><span class="badge-val bv-ankh">0.698</span></td>
+          <td><span class="badge-val bv-esm2">0.723</span></td>
+          <td><span class="badge-val bv-best">0.731</span></td>
+        </tr>
+        <tr>
+          <td>Testis ROC-AUC</td>
+          <td><span class="badge-val bv-ankh">0.685</span></td>
+          <td><span class="badge-val bv-esm2">0.704</span></td>
+          <td><span class="badge-val bv-best">0.712</span></td>
+        </tr>
+        <tr>
+          <td>Lung ROC-AUC</td>
+          <td><span class="badge-val bv-ankh">0.707</span></td>
+          <td><span class="badge-val bv-esm2">0.741</span></td>
+          <td><span class="badge-val bv-best">0.750</span></td>
+        </tr>
+        <tr>
+          <td>Liver ROC-AUC</td>
+          <td><span class="badge-val bv-ankh">0.801</span></td>
+          <td><span class="badge-val bv-esm2">0.815</span></td>
+          <td><span class="badge-val bv-best">0.833</span></td>
+        </tr>
+        <tr>
+          <td>Kidney ROC-AUC</td>
+          <td><span class="badge-val bv-ankh">0.775</span></td>
+          <td><span class="badge-val bv-esm2">0.793</span></td>
+          <td><span class="badge-val bv-best">0.804</span></td>
+        </tr>
+        <tr>
+          <td>Brain F1</td>
+          <td><span class="badge-val bv-ankh">0.726</span></td>
+          <td><span class="badge-val bv-best">0.736</span></td>
+          <td><span class="badge-val bv-prott5">0.730</span></td>
+        </tr>
+        <tr>
+          <td>Testis F1</td>
+          <td><span class="badge-val bv-ankh">0.507</span></td>
+          <td><span class="badge-val bv-esm2">0.514</span></td>
+          <td><span class="badge-val bv-best">0.527</span></td>
+        </tr>
+        <tr>
+          <td>Liver F1</td>
+          <td><span class="badge-val bv-ankh">0.458</span></td>
+          <td><span class="badge-val bv-esm2">0.482</span></td>
+          <td><span class="badge-val bv-best">0.526</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ────────────────────────────────────── 235-TISSUE TASK ── -->
+  <div id="task235" class="section-heading">
+    235-Tissue Multi-label Task
+    <span class="tag">Protein-level · 235 binary labels</span>
+  </div>
+
+  <div class="callout callout-blue">
+    One MLP is trained per pooling strategy (max-pool / attn-pool) for all 235 tissues simultaneously. Macro ROC-AUC and PR-AUC are computed over tissues with ≥1 positive in the test set.
+  </div>
+
+  <div class="comparison-wrap">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Pool</th>
+          <th>Ankh (768)</th>
+          <th>ESM2 (1280)</th>
+          <th>ProtT5 (1024)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Max-pool — Macro ROC-AUC</td>
+          <td><span class="badge-val bv-ankh">0.7558</span></td>
+          <td><span class="badge-val bv-best">0.7948</span></td>
+          <td><span class="badge-val bv-prott5">0.7688</span></td>
+        </tr>
+        <tr>
+          <td>Max-pool — Macro PR-AUC</td>
+          <td><span class="badge-val bv-ankh">0.2202</span></td>
+          <td><span class="badge-val bv-best">0.2765</span></td>
+          <td><span class="badge-val bv-prott5">0.2771</span></td>
+        </tr>
+        <tr>
+          <td>Attn-pool — Macro ROC-AUC</td>
+          <td><span class="badge-val bv-ankh">0.7920</span></td>
+          <td><span class="badge-val bv-best">0.8173</span></td>
+          <td><span class="badge-val bv-prott5">0.7968</span></td>
+        </tr>
+        <tr>
+          <td>Attn-pool — Macro PR-AUC</td>
+          <td><span class="badge-val bv-ankh">0.2650</span></td>
+          <td><span class="badge-val bv-esm2">0.3300</span></td>
+          <td><span class="badge-val bv-best">0.3383</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 235-tissue plots (tabbed) ───────────────────────────── -->
+  <div class="plot-section">
+    <div class="plot-section-header">
+      <h3>235-Tissue Plots</h3>
+    </div>
+    <div class="plot-section-body">
+      <div class="model-tabs" id="tabs235">
+        <button class="model-tab-btn active-ankh" onclick="switchTab('tabs235','t235-ankh','active-ankh')">Ankh</button>
+        <button class="model-tab-btn" onclick="switchTab('tabs235','t235-esm2','active-esm2')">ESM2</button>
+        <button class="model-tab-btn" onclick="switchTab('tabs235','t235-prott5','active-prott5')">ProtT5</button>
+      </div>
+
+      <!-- Ankh 235 -->
+      <div id="t235-ankh" class="model-tab-pane active" style="padding-top:1rem;">
+        <div class="fig-row cols-2">
+          <figure class="fig-card"><img src="ankh_results/label_distribution.png" onclick="openLB(this)" alt="Label distribution"/><figcaption>Label imbalance distribution (235 tissues)</figcaption></figure>
+          <figure class="fig-card"><img src="ankh_results/training_loss.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Training loss — max-pool vs attn-pool</figcaption></figure>
+        </div>
+        <div class="fig-row cols-2">
+          <figure class="fig-card"><img src="ankh_results/per_tissue_auc_distributions.png" onclick="openLB(this)" alt="AUC distributions"/><figcaption>Per-tissue AUC distributions (235 tissues)</figcaption></figure>
+          <figure class="fig-card"><img src="ankh_results/top20_tissues_roc_auc.png" onclick="openLB(this)" alt="Top 20 tissues"/><figcaption>Top 20 tissues by ROC-AUC</figcaption></figure>
+        </div>
+      </div>
+
+      <!-- ESM2 235 -->
+      <div id="t235-esm2" class="model-tab-pane" style="padding-top:1rem;">
+        <div class="fig-row cols-2">
+          <figure class="fig-card"><img src="esm2_results/label_distribution.png" onclick="openLB(this)" alt="Label distribution"/><figcaption>Label imbalance distribution (235 tissues)</figcaption></figure>
+          <figure class="fig-card"><img src="esm2_results/training_loss_235.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Training loss — max-pool vs attn-pool</figcaption></figure>
+        </div>
+        <div class="fig-row cols-2">
+          <figure class="fig-card"><img src="esm2_results/per_tissue_auc_distributions.png" onclick="openLB(this)" alt="AUC distributions"/><figcaption>Per-tissue AUC distributions (235 tissues)</figcaption></figure>
+          <figure class="fig-card"><img src="esm2_results/top20_tissues_roc_auc.png" onclick="openLB(this)" alt="Top 20 tissues"/><figcaption>Top 20 tissues by ROC-AUC</figcaption></figure>
+        </div>
+      </div>
+
+      <!-- ProtT5 235 -->
+      <div id="t235-prott5" class="model-tab-pane" style="padding-top:1rem;">
+        <div class="fig-row cols-2">
+          <figure class="fig-card"><img src="prodt5_results/label_distribution.png" onclick="openLB(this)" alt="Label distribution"/><figcaption>Label imbalance distribution (235 tissues)</figcaption></figure>
+          <figure class="fig-card"><img src="prodt5_results/training_loss_235.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Training loss — max-pool vs attn-pool</figcaption></figure>
+        </div>
+        <div class="fig-row cols-2">
+          <figure class="fig-card"><img src="prodt5_results/per_tissue_auc_distributions.png" onclick="openLB(this)" alt="AUC distributions"/><figcaption>Per-tissue AUC distributions (235 tissues)</figcaption></figure>
+          <figure class="fig-card"><img src="prodt5_results/top20_tissues_roc_auc.png" onclick="openLB(this)" alt="Top 20 tissues"/><figcaption>Top 20 tissues by ROC-AUC</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────── 5-LABEL TASK ───── -->
+  <div id="task5label" class="section-heading">
+    Focused 5-Label Task — Brain · Testis · Lung · Liver · Kidney
+    <span class="tag">Attn-pool · 70/10/20 split</span>
+  </div>
+
+  <div class="callout callout-green">
+    A lighter FocusedMLP (emb_dim → 128 → 5) is trained with label smoothing (0.05), AdamW (wd=0.05), gradient clipping, and early stopping (patience=30). Decision thresholds are tuned on the validation set per label.
+  </div>
+
+  <!-- per-label metrics table: all 3 models -->
+  <div class="metric-table-wrap">
+    <table class="met">
+      <thead>
+        <tr>
+          <th rowspan="2" style="text-align:left;">Tissue</th>
+          <th colspan="3" style="border-left:2px solid rgba(255,255,255,.2);">ROC-AUC</th>
+          <th colspan="3" style="border-left:2px solid rgba(255,255,255,.2);">PR-AUC</th>
+          <th colspan="3" style="border-left:2px solid rgba(255,255,255,.2);">F1</th>
+        </tr>
+        <tr>
+          <th style="background:#15803d;">Ankh</th>
+          <th style="background:#1d4ed8;">ESM2</th>
+          <th style="background:#6d28d9;">ProtT5</th>
+          <th style="background:#15803d; border-left:2px solid rgba(255,255,255,.2);">Ankh</th>
+          <th style="background:#1d4ed8;">ESM2</th>
+          <th style="background:#6d28d9;">ProtT5</th>
+          <th style="background:#15803d; border-left:2px solid rgba(255,255,255,.2);">Ankh</th>
+          <th style="background:#1d4ed8;">ESM2</th>
+          <th style="background:#6d28d9;">ProtT5</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Brain</td>
+          <td>0.698</td>
+          <td>0.723</td>
+          <td class="best-cell auc-hi">0.731 ★</td>
+          <td>0.739</td>
+          <td>0.752</td>
+          <td class="best-cell auc-hi">0.773 ★</td>
+          <td>0.726</td>
+          <td class="best-cell auc-hi">0.736 ★</td>
+          <td>0.730</td>
+        </tr>
+        <tr>
+          <td>Testis</td>
+          <td>0.685</td>
+          <td>0.704</td>
+          <td class="best-cell auc-hi">0.712 ★</td>
+          <td>0.478</td>
+          <td>0.517</td>
+          <td class="best-cell auc-hi">0.538 ★</td>
+          <td>0.507</td>
+          <td>0.514</td>
+          <td class="best-cell auc-hi">0.527 ★</td>
+        </tr>
+        <tr>
+          <td>Lung</td>
+          <td>0.707</td>
+          <td>0.741</td>
+          <td class="best-cell auc-hi">0.750 ★</td>
+          <td>0.405</td>
+          <td>0.453</td>
+          <td class="best-cell auc-hi">0.498 ★</td>
+          <td>0.428</td>
+          <td class="best-cell auc-hi">0.460 ★</td>
+          <td>0.488</td>
+        </tr>
+        <tr>
+          <td>Liver</td>
+          <td>0.801</td>
+          <td>0.815</td>
+          <td class="best-cell auc-hi">0.833 ★</td>
+          <td>0.408</td>
+          <td>0.470</td>
+          <td class="best-cell auc-hi">0.537 ★</td>
+          <td>0.458</td>
+          <td>0.482</td>
+          <td class="best-cell auc-hi">0.526 ★</td>
+        </tr>
+        <tr>
+          <td>Kidney</td>
+          <td>0.775</td>
+          <td>0.793</td>
+          <td class="best-cell auc-hi">0.804 ★</td>
+          <td>0.386</td>
+          <td>0.431</td>
+          <td class="best-cell auc-hi">0.486 ★</td>
+          <td>0.429</td>
+          <td>0.415</td>
+          <td class="best-cell auc-hi">0.469 ★</td>
+        </tr>
+        <tr style="background:#f8fafc;font-weight:700;">
+          <td><strong>Macro</strong></td>
+          <td>0.733</td>
+          <td>0.755</td>
+          <td class="best-cell auc-hi">0.766 ★</td>
+          <td>0.483</td>
+          <td>0.525</td>
+          <td class="best-cell auc-hi">0.566 ★</td>
+          <td>0.510</td>
+          <td>0.521</td>
+          <td class="best-cell auc-hi">0.548 ★</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Class distribution side by side ────────────────────── -->
+  <div class="plot-section" style="margin-bottom:2rem;">
+    <div class="plot-section-header"><h3>Class Distribution — 5 Target Tissues (ESM2 &amp; ProtT5)</h3></div>
+    <div class="plot-section-body">
+      <div class="fig-row cols-2">
+        <figure class="fig-card">
+          <img src="esm2_results/class_distribution_5targets.png" onclick="openLB(this)" alt="ESM2 class dist"/>
+          <figcaption><span class="model-pill pill-esm2">ESM2</span> Class distribution — 5 target tissues</figcaption>
+        </figure>
+        <figure class="fig-card">
+          <img src="prodt5_results/class_distribution_5targets.png" onclick="openLB(this)" alt="ProtT5 class dist"/>
+          <figcaption><span class="model-pill pill-prott5">ProtT5</span> Class distribution — 5 target tissues</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── ANKH FULL PLOTS ──── -->
+  <div id="plots-ankh" class="section-heading">
+    Ankh — Full Results Gallery
+    <span class="tag">768-dim</span>
+  </div>
+
+  <div class="plot-section">
+    <div class="plot-section-header">
+      <span class="model-pill pill-ankh">Ankh</span>
+      <h3>Training &amp; 235-Tissue Evaluation</h3>
+    </div>
+    <div class="plot-section-body">
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="ankh_results/training_loss.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Training loss (max-pool &amp; attn-pool)</figcaption></figure>
+        <figure class="fig-card"><img src="ankh_results/per_tissue_auc_distributions.png" onclick="openLB(this)" alt="AUC dist"/><figcaption>Per-tissue ROC-AUC &amp; PR-AUC distributions</figcaption></figure>
+      </div>
+      <div class="fig-row cols-1">
+        <figure class="fig-card"><img src="ankh_results/top20_tissues_roc_auc.png" onclick="openLB(this)" alt="Top 20"/><figcaption>Top 20 tissues by ROC-AUC (max-pool vs attn-pool)</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="plot-section">
+    <div class="plot-section-header">
+      <span class="model-pill pill-ankh">Ankh</span>
+      <h3>Focused 5-Label Results</h3>
+    </div>
+    <div class="plot-section-body">
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="ankh_results/focused5_training_loss.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Focused MLP — training curve (early stopping)</figcaption></figure>
+        <figure class="fig-card"><img src="ankh_results/focused5_roc_pr_curves.png" onclick="openLB(this)" alt="ROC/PR"/><figcaption>ROC &amp; PR curves — test set</figcaption></figure>
+      </div>
+      <div class="fig-row cols-1">
+        <figure class="fig-card"><img src="ankh_results/focused5_confusion_matrices.png" onclick="openLB(this)" alt="Confusion matrices"/><figcaption>Confusion matrices — unseen test set</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="ankh_results/focused5_recall_breakdown.png" onclick="openLB(this)" alt="Recall breakdown"/><figcaption>Per-tissue recall &amp; specificity breakdown</figcaption></figure>
+        <figure class="fig-card"><img src="ankh_results/focused5_score_distributions.png" onclick="openLB(this)" alt="Score dists"/><figcaption>Predicted score distributions (pos vs neg)</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="ankh_results/focused5_co_enrichment.png" onclick="openLB(this)" alt="Co-enrichment"/><figcaption>Co-enrichment heatmaps (predicted vs true)</figcaption></figure>
+        <figure class="fig-card"><img src="ankh_results/focused5_roc_pr_with_baseline.png" onclick="openLB(this)" alt="ROC PR with baseline"/><figcaption>ROC &amp; PR curves with random baseline</figcaption></figure>
+      </div>
+      <div class="fig-row cols-1">
+        <figure class="fig-card"><img src="ankh_results/focused5_pca_umap.png" onclick="openLB(this)" alt="PCA UMAP"/><figcaption>PCA &amp; UMAP — test-set embeddings coloured by tissue enrichment</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── ESM2 FULL PLOTS ──── -->
+  <div id="plots-esm2" class="section-heading">
+    ESM2 — Full Results Gallery
+    <span class="tag">1280-dim</span>
+  </div>
+
+  <div class="plot-section">
+    <div class="plot-section-header">
+      <span class="model-pill pill-esm2">ESM2</span>
+      <h3>Training &amp; 235-Tissue Evaluation</h3>
+    </div>
+    <div class="plot-section-body">
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="esm2_results/training_loss_235.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Training loss (max-pool &amp; attn-pool)</figcaption></figure>
+        <figure class="fig-card"><img src="esm2_results/per_tissue_auc_distributions.png" onclick="openLB(this)" alt="AUC dist"/><figcaption>Per-tissue ROC-AUC &amp; PR-AUC distributions</figcaption></figure>
+      </div>
+      <div class="fig-row cols-1">
+        <figure class="fig-card"><img src="esm2_results/top20_tissues_roc_auc.png" onclick="openLB(this)" alt="Top 20"/><figcaption>Top 20 tissues by ROC-AUC (max-pool vs attn-pool)</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="plot-section">
+    <div class="plot-section-header">
+      <span class="model-pill pill-esm2">ESM2</span>
+      <h3>Focused 5-Label Results</h3>
+    </div>
+    <div class="plot-section-body">
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="esm2_results/focused5_training_loss.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Focused MLP — training curve (early stopping)</figcaption></figure>
+        <figure class="fig-card"><img src="esm2_results/focused5_roc_pr_curves.png" onclick="openLB(this)" alt="ROC/PR"/><figcaption>ROC &amp; PR curves — test set</figcaption></figure>
+      </div>
+      <div class="fig-row cols-1">
+        <figure class="fig-card"><img src="esm2_results/focused5_confusion_matrices.png" onclick="openLB(this)" alt="Confusion matrices"/><figcaption>Confusion matrices — unseen test set</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="esm2_results/focused5_recall_breakdown.png" onclick="openLB(this)" alt="Recall breakdown"/><figcaption>Per-tissue recall &amp; specificity breakdown</figcaption></figure>
+        <figure class="fig-card"><img src="esm2_results/focused5_score_distributions.png" onclick="openLB(this)" alt="Score dists"/><figcaption>Predicted score distributions (pos vs neg)</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="esm2_results/focused5_vs_baseline.png" onclick="openLB(this)" alt="vs baseline"/><figcaption>Model vs random baseline (ROC-AUC, PR-AUC, F1)</figcaption></figure>
+        <figure class="fig-card"><img src="esm2_results/focused5_co_enrichment.png" onclick="openLB(this)" alt="Co-enrichment"/><figcaption>Co-enrichment heatmaps (predicted vs true)</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="esm2_results/focused5_radar_chart.png" onclick="openLB(this)" alt="Radar"/><figcaption>Per-tissue performance radar chart</figcaption></figure>
+        <figure class="fig-card"><img src="esm2_results/focused5_pca_umap.png" onclick="openLB(this)" alt="PCA UMAP"/><figcaption>PCA &amp; UMAP — test-set embeddings coloured by tissue enrichment</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── ProtT5 FULL PLOTS ── -->
+  <div id="plots-prott5" class="section-heading">
+    ProtT5 — Full Results Gallery
+    <span class="tag">1024-dim</span>
+  </div>
+
+  <div class="plot-section">
+    <div class="plot-section-header">
+      <span class="model-pill pill-prott5">ProtT5</span>
+      <h3>Training &amp; 235-Tissue Evaluation</h3>
+    </div>
+    <div class="plot-section-body">
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="prodt5_results/training_loss_235.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Training loss (max-pool &amp; attn-pool)</figcaption></figure>
+        <figure class="fig-card"><img src="prodt5_results/per_tissue_auc_distributions.png" onclick="openLB(this)" alt="AUC dist"/><figcaption>Per-tissue ROC-AUC &amp; PR-AUC distributions</figcaption></figure>
+      </div>
+      <div class="fig-row cols-1">
+        <figure class="fig-card"><img src="prodt5_results/top20_tissues_roc_auc.png" onclick="openLB(this)" alt="Top 20"/><figcaption>Top 20 tissues by ROC-AUC (max-pool vs attn-pool)</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="plot-section">
+    <div class="plot-section-header">
+      <span class="model-pill pill-prott5">ProtT5</span>
+      <h3>Focused 5-Label Results</h3>
+    </div>
+    <div class="plot-section-body">
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="prodt5_results/focused5_training_loss.png" onclick="openLB(this)" alt="Training loss"/><figcaption>Focused MLP — training curve (early stopping)</figcaption></figure>
+        <figure class="fig-card"><img src="prodt5_results/focused5_roc_pr_curves.png" onclick="openLB(this)" alt="ROC/PR"/><figcaption>ROC &amp; PR curves — test set</figcaption></figure>
+      </div>
+      <div class="fig-row cols-1">
+        <figure class="fig-card"><img src="prodt5_results/focused5_confusion_matrices.png" onclick="openLB(this)" alt="Confusion matrices"/><figcaption>Confusion matrices — unseen test set</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="prodt5_results/focused5_recall_breakdown.png" onclick="openLB(this)" alt="Recall breakdown"/><figcaption>Per-tissue recall &amp; specificity breakdown</figcaption></figure>
+        <figure class="fig-card"><img src="prodt5_results/focused5_score_distributions.png" onclick="openLB(this)" alt="Score dists"/><figcaption>Predicted score distributions (pos vs neg)</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="prodt5_results/focused5_vs_baseline.png" onclick="openLB(this)" alt="vs baseline"/><figcaption>Model vs random baseline (ROC-AUC, PR-AUC, F1)</figcaption></figure>
+        <figure class="fig-card"><img src="prodt5_results/focused5_co_enrichment.png" onclick="openLB(this)" alt="Co-enrichment"/><figcaption>Co-enrichment heatmaps (predicted vs true)</figcaption></figure>
+      </div>
+      <div class="fig-row cols-2">
+        <figure class="fig-card"><img src="prodt5_results/focused5_radar_chart.png" onclick="openLB(this)" alt="Radar"/><figcaption>Per-tissue performance radar chart</figcaption></figure>
+        <figure class="fig-card"><img src="prodt5_results/focused5_pca_umap.png" onclick="openLB(this)" alt="PCA UMAP"/><figcaption>PCA &amp; UMAP — test-set embeddings coloured by tissue enrichment</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LIGHTBOX                                                    -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="lightbox" onclick="closeLB()">
+  <button id="lightbox-close" onclick="closeLB()">✕</button>
+  <img id="lightbox-img" src="" alt="" />
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<footer>
+  Protein Tissue Enrichment — PLM Benchmark &nbsp;|&nbsp;
+  Ankh · ESM2 · ProtT5 &nbsp;|&nbsp;
+  TISSUES DB · 13,081 proteins · 235 tissues &nbsp;|&nbsp;
+  Generated 2026-05-20
+</footer>
+
+<script>
+  /* ── Tab switching ─────────────────────────────────────── */
+  function switchTab(groupId, paneId, activeClass) {
+    const group = document.getElementById(groupId);
+    // deactivate all buttons in this group
+    group.querySelectorAll('.model-tab-btn').forEach(b => {
+      b.classList.remove('active-ankh','active-esm2','active-prott5');
+    });
+    // hide all sibling panes
+    const pane = document.getElementById(paneId);
+    const parent = pane.parentElement;
+    parent.querySelectorAll('.model-tab-pane').forEach(p => p.classList.remove('active'));
+    // activate clicked
+    group.querySelector(`[onclick*="${paneId}"]`).classList.add(activeClass);
+    pane.classList.add('active');
+  }
+
+  /* ── Lightbox ──────────────────────────────────────────── */
+  function openLB(img) {
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLB() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLB(); });
+
+  /* ── Active nav highlight on scroll ───────────────────── */
+  const navLinks = document.querySelectorAll('.sticky-nav a');
+  const sections = [...navLinks].map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  window.addEventListener('scroll', () => {
+    const scroll = window.scrollY + 90;
+    let cur = '';
+    sections.forEach(s => { if (s.offsetTop <= scroll) cur = s.id; });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+    });
+  }, { passive: true });
+</script>
+
+</body>
+</html>

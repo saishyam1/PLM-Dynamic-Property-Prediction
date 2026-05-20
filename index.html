@@ -356,6 +356,111 @@
   </div>
 
 
+  <!-- ── Protein Tissue Enrichment — TISSUES 2025 ──────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>Protein Tissue Enrichment Prediction — TISSUES 2025</h2>
+      <span class="task-type-badge badge-site" style="background:#ede9fe;color:#4c1d95;">Protein-level · Multi-label</span>
+      <span class="task-meta">13,081 proteins · 235 tissues (TISSUES DB 2025) · shared-backbone MLP · 5-label focused task (Brain · Testis · Lung · Liver · Kidney)</span>
+    </div>
+    <div class="model-cards">
+
+      <!-- Ankh -->
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · Attn-pool MLP · 235-tissue + 5-label focused</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.7920</span></div>
+          <div class="metric-chip">PR-AUC <span>0.2650</span></div>
+          <div class="metric-chip">5-task ROC <span>0.7332</span></div>
+        </div>
+        <a href="dynamic_properties/Protein_Cell_tissue_confidence/report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <!-- ESM2 -->
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Attn-pool MLP · 235-tissue + 5-label focused</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">ROC-AUC <span>0.8173</span></div>
+          <div class="metric-chip">PR-AUC <span>0.3300</span></div>
+          <div class="metric-chip">5-task ROC <span>0.7554</span></div>
+        </div>
+        <a href="dynamic_properties/Protein_Cell_tissue_confidence/report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <!-- ProtT5 -->
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · Attn-pool MLP · 235-tissue + 5-label focused</div>
+        <div class="metrics">
+          <div class="metric-chip primary">ROC-AUC <span>0.7968</span></div>
+          <div class="metric-chip best">PR-AUC <span>0.3383</span></div>
+          <div class="metric-chip best">5-task ROC <span>0.7657</span></div>
+        </div>
+        <a href="dynamic_properties/Protein_Cell_tissue_confidence/report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PMADS PTM Drug Response ────────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>PMADS PTM Drug Response — Phosphorylation · 3 Experiments</h2>
+      <span class="task-type-badge badge-site" style="background:#fff1f2;color:#9f1239;">Site-level · Binary · Drug sensitivity</span>
+      <span class="task-meta">PMADS database (4,775 curated + 43,800+ inferred PTM–drug–disease associations) · Melanoma WM1366 &amp; WM793 (FUT4 OE · Arimoclomol) · Prostate LNCaP (Palbociclib) · 4 model variants per PLM</span>
+    </div>
+    <div class="model-cards">
+
+      <!-- Ankh -->
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · Best: Hybrid (C+Attn) MLP · across 3 experiments</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">AUROC <span>0.8128</span></div>
+          <div class="metric-chip">AUPRC <span>0.6151</span></div>
+          <div class="metric-chip">F1 <span>0.5714</span></div>
+        </div>
+        <div style="font-size:.7rem;color:#94a3b8;margin:.3rem 0 .5rem .1rem;">Best: Prostate · Hybrid (C+Attn)</div>
+        <a href="../Dynamic_properties/PDMAS_drug_response/report.html"
+           class="btn-report btn-ankh">Open Report →</a>
+      </div>
+
+      <!-- ESM2 -->
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Best: CenterOnly MLP / Hybrid · across 3 experiments</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.7917</span></div>
+          <div class="metric-chip">AUPRC <span>0.5981</span></div>
+          <div class="metric-chip">F1 <span>0.6944</span></div>
+        </div>
+        <div style="font-size:.7rem;color:#94a3b8;margin:.3rem 0 .5rem .1rem;">Best F1: WM1366 · CenterOnly MLP</div>
+        <a href="../Dynamic_properties/PDMAS_drug_response/report.html"
+           class="btn-report btn-esm2">Open Report →</a>
+      </div>
+
+      <!-- ProtT5 -->
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · Best: CenterOnly MLP / AttnPool · across 3 experiments</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">AUROC <span>0.8190</span></div>
+          <div class="metric-chip">AUPRC <span>0.6196</span></div>
+          <div class="metric-chip best">F1 <span>0.6957</span></div>
+        </div>
+        <div style="font-size:.7rem;color:#94a3b8;margin:.3rem 0 .5rem .1rem;">Best AUROC: Prostate · CenterOnly · Best F1: WM1366 · AttnPool</div>
+        <a href="../Dynamic_properties/PDMAS_drug_response/report.html"
+           class="btn-report btn-prott5">Open Report →</a>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ══════════════════════════════════════════════════════════ -->
   <!-- SECTION 2 — STATIC PROPERTIES                            -->
   <!-- ══════════════════════════════════════════════════════════ -->

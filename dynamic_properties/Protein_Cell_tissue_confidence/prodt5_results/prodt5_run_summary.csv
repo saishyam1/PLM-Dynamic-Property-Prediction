@@ -1,0 +1,3 @@
+pool,model,embedding_dim,n_proteins_ml,n_tissues,n_tissues_evaluated,train_size,test_size,macro_roc_auc,macro_pr_auc,epochs,batch_size,lr
+max,ProtT5 + MLP,1024,13081,235,235,10464,2617,0.7687610339462752,0.27713323196471745,40,64,0.001
+attn,ProtT5 + MLP,1024,13081,235,235,10464,2617,0.7968129305462778,0.33828098101051113,40,64,0.001
