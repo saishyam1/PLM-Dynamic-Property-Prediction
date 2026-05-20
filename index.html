@@ -407,57 +407,126 @@
     </div>
   </div>
 
-  <!-- ── PMADS PTM Drug Response ────────────────────────────── -->
+  <!-- ── PMADS Exp 1 — Melanoma WM1366 ─────────────────────────── -->
   <div class="task-block">
     <div class="task-header">
-      <h2>PMADS PTM Drug Response — Phosphorylation · 3 Experiments</h2>
-      <span class="task-type-badge badge-site" style="background:#fff1f2;color:#9f1239;">Site-level · Binary · Drug sensitivity</span>
-      <span class="task-meta">PMADS database (4,775 curated + 43,800+ inferred PTM–drug–disease associations) · Melanoma WM1366 &amp; WM793 (FUT4 OE · Arimoclomol) · Prostate LNCaP (Palbociclib) · 4 model variants per PLM</span>
+      <h2>PMADS PTM Drug Response — Melanoma WM1366 · Arimoclomol</h2>
+      <span class="task-type-badge badge-site" style="background:#fff1f2;color:#9f1239;">Site-level · Binary · Drug sensitivity · Phosphorylation</span>
+      <span class="task-meta">PMADS database · Melanoma WM1366 · FUT4 OE · Arimoclomol (HSP co-inducer) · Can PLMs predict up/down phosphorylation from sequence alone? · 4 model variants per PLM</span>
     </div>
     <div class="model-cards">
-
-      <!-- Ankh -->
       <div class="model-card">
         <div class="model-badge badge-ankh">Ankh</div>
-        <div class="model-desc">768-dim · Best: Hybrid (C+Attn) MLP · across 3 experiments</div>
+        <div class="model-desc">768-dim · Hybrid (C+Attn) MLP · best variant WM1366</div>
         <div class="metrics">
-          <div class="metric-chip primary best">AUROC <span>0.8128</span></div>
+          <div class="metric-chip primary">AUROC <span>0.7484</span></div>
+          <div class="metric-chip">AUPRC <span>0.7219</span></div>
+          <div class="metric-chip">F1 <span>0.6422</span></div>
+        </div>
+        <a href="dynamic_properties/PDMAS_drug_response/report_wm1366.html" class="btn-report btn-ankh">Open Report →</a>
+      </div>
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · CenterOnly MLP · best variant WM1366</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">AUROC <span>0.7770</span></div>
+          <div class="metric-chip">AUPRC <span>0.7042</span></div>
+          <div class="metric-chip best">F1 <span>0.6944 ★</span></div>
+        </div>
+        <a href="dynamic_properties/PDMAS_drug_response/report_wm1366.html" class="btn-report btn-esm2">Open Report →</a>
+      </div>
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · AttnPool MLP · best variant WM1366</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.7654</span></div>
+          <div class="metric-chip">AUPRC <span>0.7021</span></div>
+          <div class="metric-chip">F1 <span>0.6957</span></div>
+        </div>
+        <a href="dynamic_properties/PDMAS_drug_response/report_wm1366.html" class="btn-report btn-prott5">Open Report →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PMADS Exp 2 — Melanoma WM793 ──────────────────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>PMADS PTM Drug Response — Melanoma WM793 · Arimoclomol</h2>
+      <span class="task-type-badge badge-site" style="background:#f0fdfa;color:#134e4a;">Site-level · Binary · Drug sensitivity · Phosphorylation · Replication</span>
+      <span class="task-meta">PMADS database · Melanoma WM793 · FUT4 OE · Arimoclomol · Independent cell-line replication of Exp 1 — tests cross-cell-line generalisation of sequence-based PTM prediction · 4 model variants per PLM</span>
+    </div>
+    <div class="model-cards">
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · AttnPool MLP · best variant WM793</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.7123</span></div>
+          <div class="metric-chip best">AUPRC <span>0.7214</span></div>
+          <div class="metric-chip">F1 <span>0.6695</span></div>
+        </div>
+        <a href="dynamic_properties/PDMAS_drug_response/report_wm793.html" class="btn-report btn-ankh">Open Report →</a>
+      </div>
+      <div class="model-card">
+        <div class="model-badge badge-esm2">ESM2</div>
+        <div class="model-desc">1280-dim · Hybrid (C+Attn) MLP · best variant WM793</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">AUROC <span>0.7320</span></div>
+          <div class="metric-chip">AUPRC <span>0.7323</span></div>
+          <div class="metric-chip best">F1 <span>0.6938 ★</span></div>
+        </div>
+        <a href="dynamic_properties/PDMAS_drug_response/report_wm793.html" class="btn-report btn-esm2">Open Report →</a>
+      </div>
+      <div class="model-card">
+        <div class="model-badge badge-prott5">ProtT5</div>
+        <div class="model-desc">1024-dim · AttnPool MLP · best variant WM793</div>
+        <div class="metrics">
+          <div class="metric-chip primary">AUROC <span>0.7186</span></div>
+          <div class="metric-chip">AUPRC <span>0.7297</span></div>
+          <div class="metric-chip">F1 <span>0.6862</span></div>
+        </div>
+        <a href="dynamic_properties/PDMAS_drug_response/report_wm793.html" class="btn-report btn-prott5">Open Report →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PMADS Exp 3 — Prostate LNCaP Palbociclib ──────────────── -->
+  <div class="task-block">
+    <div class="task-header">
+      <h2>PMADS PTM Drug Response — Prostate LNCaP · Palbociclib</h2>
+      <span class="task-type-badge badge-site" style="background:#f5f3ff;color:#4c1d95;">Site-level · Binary · Drug sensitivity · Phosphorylation · Highest AUROC</span>
+      <span class="task-meta">PMADS database · Prostate LNCaP · Palbociclib (CDK4/6 inhibitor) · All PLMs AUROC &gt; 0.79 — CDK4/6 consensus motifs (S/T-P-x-K/R) may be sequence-learnable · 4 model variants per PLM</span>
+    </div>
+    <div class="model-cards">
+      <div class="model-card">
+        <div class="model-badge badge-ankh">Ankh</div>
+        <div class="model-desc">768-dim · Hybrid (C+Attn) MLP · best variant Prostate</div>
+        <div class="metrics">
+          <div class="metric-chip primary best">AUROC <span>0.8128 ★</span></div>
           <div class="metric-chip">AUPRC <span>0.6151</span></div>
           <div class="metric-chip">F1 <span>0.5714</span></div>
         </div>
-        <div style="font-size:.7rem;color:#94a3b8;margin:.3rem 0 .5rem .1rem;">Best: Prostate · Hybrid (C+Attn)</div>
-        <a href="dynamic_properties/PDMAS_drug_response/report.html"
-           class="btn-report btn-ankh">Open Report →</a>
+        <a href="dynamic_properties/PDMAS_drug_response/report_prostate.html" class="btn-report btn-ankh">Open Report →</a>
       </div>
-
-      <!-- ESM2 -->
       <div class="model-card">
         <div class="model-badge badge-esm2">ESM2</div>
-        <div class="model-desc">1280-dim · Best: CenterOnly MLP / Hybrid · across 3 experiments</div>
+        <div class="model-desc">1280-dim · CenterOnly MLP · best variant Prostate</div>
         <div class="metrics">
           <div class="metric-chip primary">AUROC <span>0.7917</span></div>
           <div class="metric-chip">AUPRC <span>0.5981</span></div>
-          <div class="metric-chip">F1 <span>0.6944</span></div>
+          <div class="metric-chip">F1 <span>0.6000</span></div>
         </div>
-        <div style="font-size:.7rem;color:#94a3b8;margin:.3rem 0 .5rem .1rem;">Best F1: WM1366 · CenterOnly MLP</div>
-        <a href="dynamic_properties/PDMAS_drug_response/report.html"
-           class="btn-report btn-esm2">Open Report →</a>
+        <a href="dynamic_properties/PDMAS_drug_response/report_prostate.html" class="btn-report btn-esm2">Open Report →</a>
       </div>
-
-      <!-- ProtT5 -->
       <div class="model-card">
         <div class="model-badge badge-prott5">ProtT5</div>
-        <div class="model-desc">1024-dim · Best: CenterOnly MLP / AttnPool · across 3 experiments</div>
+        <div class="model-desc">1024-dim · CenterOnly MLP · best variant Prostate</div>
         <div class="metrics">
-          <div class="metric-chip primary best">AUROC <span>0.8190</span></div>
-          <div class="metric-chip">AUPRC <span>0.6196</span></div>
-          <div class="metric-chip best">F1 <span>0.6957</span></div>
+          <div class="metric-chip primary best">AUROC <span>0.8190 ★</span></div>
+          <div class="metric-chip best">AUPRC <span>0.6196</span></div>
+          <div class="metric-chip best">F1 <span>0.6410 ★</span></div>
         </div>
-        <div style="font-size:.7rem;color:#94a3b8;margin:.3rem 0 .5rem .1rem;">Best AUROC: Prostate · CenterOnly · Best F1: WM1366 · AttnPool</div>
-        <a href="dynamic_properties/PDMAS_drug_response/report.html"
-           class="btn-report btn-prott5">Open Report →</a>
+        <a href="dynamic_properties/PDMAS_drug_response/report_prostate.html" class="btn-report btn-prott5">Open Report →</a>
       </div>
-
     </div>
   </div>
 

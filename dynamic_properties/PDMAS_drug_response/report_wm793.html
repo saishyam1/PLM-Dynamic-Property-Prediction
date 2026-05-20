@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMADS · Exp 2 — Melanoma WM793 · Arimoclomol · Phosphorylation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: #f0f4f8; color: #1e293b; line-height: 1.55; }
+
+  .hero {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 50%, #1a1a2e 100%);
+    color: #fff; padding: 2.8rem 2rem 2rem; border-bottom: 4px solid #e2e8f0;
+  }
+  .hero-breadcrumb { font-size: .75rem; color: #7dd3fc; margin-bottom: .5rem; }
+  .hero-breadcrumb a { color: #7dd3fc; text-decoration: none; }
+  .hero-breadcrumb a:hover { text-decoration: underline; }
+  .hero h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .4rem; }
+  .hero .subtitle { font-size: .95rem; color: #bae6fd; margin-bottom: 1.2rem; }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .hchip {
+    background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.22);
+    color: #f1f5f9; border-radius: 20px; padding: .28rem .85rem;
+    font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+  }
+
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff; border-bottom: 2px solid #e2e8f0;
+    display: flex; gap: 0; overflow-x: auto; padding: 0 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .sticky-nav a {
+    display: block; padding: .85rem 1.1rem; font-size: .82rem; font-weight: 600;
+    color: #64748b; text-decoration: none; white-space: nowrap; border-bottom: 3px solid transparent;
+    transition: all .15s;
+  }
+  .sticky-nav a:hover, .sticky-nav a.active { color: #0369a1; border-bottom-color: #0369a1; }
+
+  .container { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .section-heading {
+    font-size: 1.2rem; font-weight: 800; color: #0f172a;
+    border-left: 5px solid #0891b2; padding: .55rem 1rem;
+    margin: 2.5rem 0 1.2rem; background: #f0f9ff;
+    border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: .7rem;
+  }
+  .section-heading .tag {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    background: #0891b2; color: #fff; border-radius: 4px; padding: .15rem .5rem;
+  }
+
+  .model-pill { border-radius: 20px; padding: .2rem .65rem; font-size: .74rem; font-weight: 700; letter-spacing: .04em; }
+  .pill-ankh   { background: #dcfce7; color: #14532d; }
+  .pill-esm2   { background: #dbeafe; color: #1e40af; }
+  .pill-prott5 { background: #ede9fe; color: #4c1d95; }
+
+  .callout { border-radius: 10px; padding: 1rem 1.3rem; margin-bottom: 1.5rem; font-size: .85rem; line-height: 1.6; }
+  .callout-blue   { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+  .callout-green  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+  .callout-amber  { background: #fefce8; border: 1px solid #fde68a; color: #78350f; }
+  .callout-red    { background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; }
+  .callout-cyan   { background: #ecfeff; border: 1px solid #a5f3fc; color: #155e75; }
+
+  .workflow-steps { display: grid; gap: .75rem; margin-bottom: 1.5rem; }
+  .workflow-step {
+    display: grid; grid-template-columns: 2.2rem 1fr; gap: .8rem;
+    background: #fff; border-radius: 10px; border: 1px solid #e2e8f0;
+    padding: .9rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .step-num {
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: #0891b2; color: #fff; font-size: .82rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-body { font-size: .84rem; color: #334155; }
+  .step-body strong { color: #0f172a; }
+  .step-body .variants { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .35rem; }
+  .var-chip { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 5px;
+              padding: .12rem .5rem; font-size: .73rem; font-weight: 600; color: #475569; }
+
+  .comparison-wrap { overflow-x: auto; margin-bottom: 2rem; }
+  .comp-table { width: 100%; border-collapse: collapse; background: #fff;
+                border-radius: 10px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,.06); }
+  .comp-table thead tr { background: #0c4a6e; color: #fff; }
+  .comp-table thead th { padding: .7rem 1rem; font-size: .78rem; font-weight: 700;
+                         text-transform: uppercase; letter-spacing: .06em; text-align: left; }
+  .comp-table tbody tr:nth-child(even) { background: #f0f9ff; }
+  .comp-table tbody tr:hover { background: #e0f2fe; }
+  .comp-table td { padding: .55rem 1rem; font-size: .84rem; border-bottom: 1px solid #bae6fd; }
+  .sub { font-size: .7rem; color: #94a3b8; margin-left: .3rem; font-weight: 400; }
+  .badge-val { display: inline-block; padding: .18rem .55rem; border-radius: 5px;
+               font-size: .82rem; font-weight: 700; }
+  .bv-best   { background: #fef9c3; color: #713f12; border: 1px solid #fde047; }
+  .bv-ankh   { background: #dcfce7; color: #14532d; }
+  .bv-esm2   { background: #dbeafe; color: #1e40af; }
+  .bv-prott5 { background: #ede9fe; color: #4c1d95; }
+
+  details summary {
+    cursor: pointer; font-size: .82rem; font-weight: 700; color: #0369a1;
+    padding: .5rem .8rem; background: #f0f9ff; border-radius: 8px;
+    border: 1px solid #bae6fd; margin-bottom: .6rem; user-select: none; list-style: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "▶ "; font-size: .7rem; }
+  details[open] summary::before { content: "▼ "; }
+  .full-table { width: 100%; border-collapse: collapse; background: #fff;
+                font-size: .8rem; border-radius: 8px; overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 1rem; }
+  .full-table thead tr { background: #0c4a6e; color: #fff; }
+  .full-table thead th { padding: .5rem .8rem; font-weight: 600; text-align: left; }
+  .full-table tbody tr:nth-child(even) { background: #f0f9ff; }
+  .full-table td { padding: .45rem .8rem; border-bottom: 1px solid #bae6fd; }
+
+  .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 1.5rem; }
+  .tab-btn {
+    padding: .6rem 1.2rem; font-size: .82rem; font-weight: 600; color: #64748b;
+    background: none; border: none; cursor: pointer; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; transition: all .15s;
+  }
+  .tab-btn:hover { color: #0369a1; }
+  .tab-btn.active { color: #0369a1; border-bottom-color: #0891b2; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .fig-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
+  .fig-card { background: #fff; border-radius: 10px; border: 1px solid #e2e8f0;
+              overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+  .fig-card img { width: 100%; display: block; cursor: pointer; transition: opacity .15s; }
+  .fig-card img:hover { opacity: .88; }
+  .fig-caption { padding: .55rem .9rem; font-size: .76rem; color: #64748b; font-weight: 500;
+                 border-top: 1px solid #f1f5f9; background: #fafafa; }
+
+  #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.87);
+              z-index: 9999; align-items: center; justify-content: center; padding: 1.5rem; }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 6px; }
+  #lightbox-close { position: fixed; top: 1rem; right: 1.4rem; font-size: 2rem;
+                    color: #fff; cursor: pointer; line-height: 1; }
+
+  .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem;
+               font-weight: 600; color: #0369a1; text-decoration: none; margin-bottom: 1.5rem;
+               padding: .4rem .9rem; background: #f0f9ff; border: 1px solid #bae6fd;
+               border-radius: 7px; }
+  .back-link:hover { background: #e0f2fe; }
+</style>
+</head>
+<body>
+
+<div id="lightbox">
+  <span id="lightbox-close" onclick="closeLightbox()">✕</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<div class="hero">
+  <div class="hero-breadcrumb">
+    <a href="report.html">← PMADS PTM Drug Response Overview</a>
+  </div>
+  <h1>Exp 2 — Melanoma WM793 · Arimoclomol · Phosphorylation</h1>
+  <div class="subtitle">FUT4 Overexpression · Replication Experiment in Independent Cell Line · Site-level Binary Classification</div>
+  <div class="hero-chips">
+    <span class="hchip">Experiment 2 of 3</span>
+    <span class="hchip">Melanoma · WM793</span>
+    <span class="hchip">FUT4 OE</span>
+    <span class="hchip">Arimoclomol</span>
+    <span class="hchip">Phosphorylation</span>
+    <span class="hchip">Ankh · ESM2 · ProtT5</span>
+    <span class="hchip">4 Model Variants</span>
+  </div>
+</div>
+
+<nav class="sticky-nav">
+  <a href="#question">Biological Question</a>
+  <a href="#workflow">Workflow</a>
+  <a href="#experiment">Experiment</a>
+  <a href="#results">Results</a>
+  <a href="#figures">Figures</a>
+</nav>
+
+<div class="container">
+
+  <a class="back-link" href="report.html">← All experiments overview</a>
+
+  <!-- ─────────────── BIOLOGICAL QUESTION ── -->
+  <div id="question" class="section-heading">
+    Biological Question <span class="tag">Core Hypothesis</span>
+  </div>
+
+  <div class="callout callout-cyan" style="font-size:.9rem;line-height:1.7;">
+    <strong>Can a protein language model predict which sites will be up- or down-regulated in PTM abundance under a specific drug treatment — using only the protein's amino acid sequence?</strong>
+  </div>
+
+  <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:1.3rem 1.5rem;margin-bottom:1.5rem;font-size:.86rem;line-height:1.7;color:#334155;">
+    <p style="margin-bottom:.9rem;">Post-translational modifications (PTMs) are direct effectors of cellular drug response. When Arimoclomol is applied to FUT4-overexpressing melanoma cells, it triggers cascades that alter phosphorylation states across thousands of sites. This experiment asks the same core question as Exp 1 (WM1366) but in an <strong>independent melanoma cell line (WM793)</strong> — serving as a replication to test whether PLM-learned sequence features generalise across different tumour backgrounds under the same drug context.</p>
+    <p style="margin-bottom:.9rem;">The model receives only the protein amino acid sequence — no drug structure, no cell-line identity, no prior experimental readout. If results in WM793 mirror those in WM1366, it argues that PLMs detect <strong>universal sequence-encoded phospho-regulatory grammar</strong>, not cell-line-specific artefacts.</p>
+    <p>If PLMs succeed, it implies that evolution has encoded PTM-regulatory context into local and global sequence patterns that language models can read — enabling <strong>zero-shot prioritisation</strong> of candidate PTM sites for drug-response studies.</p>
+    <p style="margin-top:.9rem;padding-top:.9rem;border-top:1px solid #e2e8f0;"><strong>PTM types investigated:</strong> The PMADS database covers 19 PTM types. In this report:
+      <span style="display:inline-block;background:#fee2e2;color:#991b1b;border-radius:4px;padding:.1rem .45rem;font-size:.76rem;font-weight:700;margin:.2rem .3rem;">Phosphorylation</span> — Experiments 1 (WM1366), 2 (WM793), 3 (Prostate LNCaP).<br>
+      <span style="display:inline-block;background:#fef9c3;color:#713f12;border-radius:4px;padding:.1rem .45rem;font-size:.76rem;font-weight:700;margin:.2rem .3rem;">Acetylation</span> — Investigated in separate experiments using the same PLM-embedding pipeline on PMADS acetylation entries (Lys-residue context). Results not shown here but use an identical analytical framework.
+    </p>
+  </div>
+
+  <!-- ─────────────── WORKFLOW ── -->
+  <div id="workflow" class="section-heading">
+    Analysis Workflow <span class="tag">Pipeline</span>
+  </div>
+
+  <div class="workflow-steps">
+    <div class="workflow-step">
+      <div class="step-num">1</div>
+      <div class="step-body"><strong>Data source — PMADS database</strong><br>
+      Download curated + inferred PTM–drug–disease associations (PMADS.xlsx + Whole_DB.zip). Filter to entries with quantitative fold-change data from PRIDE-derived proteomics experiments (MaxQuant; FDR-corrected Wilcoxon, adj. P &lt; 0.05).</div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">2</div>
+      <div class="step-body"><strong>Experiment-specific filtering</strong><br>
+      Select entries matching: PTM type = <em>phosphorylation</em>, cell line = <em>WM793</em>, drug = <em>Arimoclomol</em>, genetic context = <em>FUT4 OE</em>. This mirrors Exp 1 but in a biologically independent cell line to test cross-background generalisation.</div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">3</div>
+      <div class="step-body"><strong>Binary label assignment</strong><br>
+      Sites with significant up-regulation in drug-treated conditions → <strong>class 1</strong> (drug-responsive). Sites that are down-regulated, unchanged, or below significance threshold → <strong>class 0</strong>. Balanced 80:20 train/test split.</div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">4</div>
+      <div class="step-body"><strong>PLM embedding extraction</strong><br>
+      Four embedding strategies per model to capture different aspects of sequence context:
+      <div class="variants">
+        <span class="var-chip">CenterOnly — embedding of the modified residue (phospho-Ser/Thr/Tyr)</span>
+        <span class="var-chip">AttnPool — attention-weighted mean over full sequence</span>
+        <span class="var-chip">MaxPool — element-wise max over all residue embeddings</span>
+        <span class="var-chip">Hybrid (C+Attn) — concat of CenterOnly + AttnPool</span>
+      </div></div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">5</div>
+      <div class="step-body"><strong>Binary MLP classifier</strong><br>
+      Shallow MLP (2 hidden layers, ReLU, dropout) trained on 80% split with class-weighted BCE loss. Hyperparameters tuned per embedding strategy.</div>
+    </div>
+    <div class="workflow-step">
+      <div class="step-num">6</div>
+      <div class="step-body"><strong>Evaluation &amp; cross-experiment comparison</strong><br>
+      Metrics: AUROC, AUPRC, Precision, Recall, F1 (at optimal threshold). Results compared to Exp 1 (WM1366) to assess cross-cell-line generalisation. Best variant per PLM selected by F1. All 12 combinations reported.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────── EXPERIMENT ── -->
+  <div id="experiment" class="section-heading">
+    Experiment Details <span class="tag">WM793 · Replication</span>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>Replication design:</strong> WM793 uses the exact same drug (Arimoclomol) and genetic perturbation (FUT4 OE) as Exp 1 (WM1366) but in an independent melanoma cell line. This tests whether PLM embeddings detect a <strong>drug–PTM signal that is cell-line-invariant</strong> — i.e., encoded in the protein sequence itself rather than in cell-type-specific regulatory contexts.
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem;">
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:1.1rem 1.3rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.4rem;">Cell Line</div>
+      <div style="font-size:1rem;font-weight:700;color:#0369a1;margin-bottom:.3rem;">WM793</div>
+      <div style="font-size:.83rem;color:#475569;">Melanoma cell line derived from metastatic tissue. Distinct genetic background from WM1366 (primary tumour). Used here to confirm that drug-responsive phospho-site predictions generalise across melanoma subtypes under the same drug and perturbation context.</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:1.1rem 1.3rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.4rem;">Drug</div>
+      <div style="font-size:1rem;font-weight:700;color:#0369a1;margin-bottom:.3rem;">Arimoclomol</div>
+      <div style="font-size:.83rem;color:#475569;">Co-inducer of heat shock proteins (HSP70, HSP90). Amplifies the endogenous heat shock response. Applied here to FUT4-OE WM793 cells to compare phosphorylation remodelling with the WM1366 context.</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:1.1rem 1.3rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.4rem;">Genetic Context</div>
+      <div style="font-size:1rem;font-weight:700;color:#0369a1;margin-bottom:.3rem;">FUT4 Overexpression</div>
+      <div style="font-size:.83rem;color:#475569;">Same FUT4 (Lewis X synthase / CD15) overexpression as Exp 1. Enables direct cross-cell-line comparison. FUT4-driven glycosylation changes alter receptor signalling and downstream phospho-cascades.</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:1.1rem 1.3rem;">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.4rem;">PTM Type</div>
+      <div style="font-size:1rem;font-weight:700;color:#0369a1;margin-bottom:.3rem;">Phosphorylation</div>
+      <div style="font-size:.83rem;color:#475569;">Ser/Thr/Tyr phosphorylation sites from PMADS inferred dataset (PRIDE proteomics). Same quality filters as Exp 1: localisation probability &gt; 0.8, MaxQuant score &gt; 40, FDR-corrected significance.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────── RESULTS ── -->
+  <div id="results" class="section-heading">
+    Results — WM793 Best Models <span class="tag">Experiment 2</span>
+  </div>
+
+  <div class="comparison-wrap">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Model · Best Variant</th>
+          <th>AUROC</th><th>AUPRC</th><th>Precision</th><th>Recall</th><th>F1</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="model-pill pill-ankh">Ankh</span> <span class="sub">AttnPool MLP</span></td>
+          <td><span class="badge-val bv-ankh">0.7123</span></td>
+          <td><span class="badge-val bv-best">0.7214</span></td>
+          <td>0.6695</td><td>0.6695</td>
+          <td><span class="badge-val bv-ankh">0.6695</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-pill pill-esm2">ESM2</span> <span class="sub">Hybrid (C+Attn)</span></td>
+          <td><span class="badge-val bv-best">0.7320 ★</span></td>
+          <td><span class="badge-val bv-esm2">0.7323</span></td>
+          <td>0.7043</td><td>0.6835</td>
+          <td><span class="badge-val bv-best">0.6938 ★</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-pill pill-prott5">ProtT5</span> <span class="sub">AttnPool MLP</span></td>
+          <td><span class="badge-val bv-prott5">0.7186</span></td>
+          <td><span class="badge-val bv-prott5">0.7297</span></td>
+          <td>0.6805</td><td>0.6920</td>
+          <td><span class="badge-val bv-prott5">0.6862</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-cyan">
+    <strong>Interpretation:</strong> WM793 results closely track WM1366 (Exp 1) — all three PLMs achieve AUROC 0.71–0.73 and F1 0.67–0.69. ESM2 Hybrid (C+Attn) leads on both AUROC (0.732) and F1 (0.694). The consistency between the two independent melanoma cell lines under the same drug/perturbation context suggests that PLMs are detecting <strong>protein-sequence-intrinsic signals</strong>, not cell-line-specific regulatory artefacts. AttnPool variants perform consistently well across both Ankh and ProtT5, supporting global sequence context as an important complement to the local site embedding.
+  </div>
+
+  <details style="margin-bottom:1.5rem;">
+    <summary>Show all 12 model variants — WM793</summary>
+    <table class="full-table">
+      <thead><tr><th>PLM</th><th>Variant</th><th>AUROC</th><th>AUPRC</th><th>Precision</th><th>Recall</th><th>F1</th></tr></thead>
+      <tbody>
+        <tr><td><span class="model-pill pill-ankh">Ankh</span></td><td>Hybrid (C+Attn)</td><td>0.7130</td><td>0.7081</td><td>0.6820</td><td>0.6192</td><td>0.6491</td></tr>
+        <tr><td><span class="model-pill pill-ankh">Ankh</span></td><td>AttnPool MLP</td><td>0.7123</td><td>0.7214</td><td>0.6695</td><td>0.6695</td><td><strong>0.6695</strong></td></tr>
+        <tr><td><span class="model-pill pill-ankh">Ankh</span></td><td>CenterOnly MLP</td><td>0.7036</td><td>0.7062</td><td>0.6746</td><td>0.5900</td><td>0.6295</td></tr>
+        <tr><td><span class="model-pill pill-ankh">Ankh</span></td><td>MaxPool MLP</td><td>0.6530</td><td>0.6626</td><td>0.6687</td><td>0.4644</td><td>0.5481</td></tr>
+        <tr><td><span class="model-pill pill-esm2">ESM2</span></td><td>AttnPool MLP</td><td>0.7326</td><td>0.7551</td><td>0.7149</td><td>0.6667</td><td>0.6900</td></tr>
+        <tr><td><span class="model-pill pill-esm2">ESM2</span></td><td>Hybrid (C+Attn)</td><td>0.7320</td><td>0.7323</td><td>0.7043</td><td>0.6835</td><td><strong>0.6938</strong></td></tr>
+        <tr><td><span class="model-pill pill-esm2">ESM2</span></td><td>CenterOnly MLP</td><td>0.7318</td><td>0.7394</td><td>0.7032</td><td>0.6498</td><td>0.6754</td></tr>
+        <tr><td><span class="model-pill pill-esm2">ESM2</span></td><td>MaxPool MLP</td><td>0.6784</td><td>0.6859</td><td>0.6441</td><td>0.6034</td><td>0.6231</td></tr>
+        <tr><td><span class="model-pill pill-prott5">ProtT5</span></td><td>CenterOnly MLP</td><td>0.7247</td><td>0.6999</td><td>0.6968</td><td>0.5527</td><td>0.6165</td></tr>
+        <tr><td><span class="model-pill pill-prott5">ProtT5</span></td><td>AttnPool MLP</td><td>0.7186</td><td>0.7297</td><td>0.6805</td><td>0.6920</td><td><strong>0.6862</strong></td></tr>
+        <tr><td><span class="model-pill pill-prott5">ProtT5</span></td><td>Hybrid (C+Attn)</td><td>0.7140</td><td>0.7123</td><td>0.6694</td><td>0.6835</td><td>0.6764</td></tr>
+        <tr><td><span class="model-pill pill-prott5">ProtT5</span></td><td>MaxPool MLP</td><td>0.6725</td><td>0.7057</td><td>0.6901</td><td>0.4135</td><td>0.5172</td></tr>
+      </tbody>
+    </table>
+  </details>
+
+  <!-- ─────────────── FIGURES ── -->
+  <div id="figures" class="section-heading">
+    Figure Gallery <span class="tag">WM793</span>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('ankh',this)"><span class="model-pill pill-ankh">Ankh</span></button>
+    <button class="tab-btn" onclick="switchTab('esm2',this)"><span class="model-pill pill-esm2">ESM2</span></button>
+    <button class="tab-btn" onclick="switchTab('prott5',this)"><span class="model-pill pill-prott5">ProtT5</span></button>
+  </div>
+
+  <div id="panel-ankh" class="tab-panel active">
+    <div class="fig-grid">
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_ankh/01_class_distribution.png" onclick="openLightbox(this)"><div class="fig-caption">Class distribution — Ankh · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_ankh/04_central_residue_composition.png" onclick="openLightbox(this)"><div class="fig-caption">Central residue composition — Ankh · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_ankh/05_roc_pr_curves.png" onclick="openLightbox(this)"><div class="fig-caption">ROC &amp; PR curves — Ankh · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_ankh/06_confusion_matrices.png" onclick="openLightbox(this)"><div class="fig-caption">Confusion matrices — Ankh · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_ankh/08_pca_tsne.png" onclick="openLightbox(this)"><div class="fig-caption">PCA / t-SNE embeddings — Ankh · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_ankh/09_model_performance_summary.png" onclick="openLightbox(this)"><div class="fig-caption">Model performance summary — Ankh · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_ankh/10_metrics_heatmap.png" onclick="openLightbox(this)"><div class="fig-caption">Metrics heatmap — Ankh · WM793</div></div>
+    </div>
+  </div>
+  <div id="panel-esm2" class="tab-panel">
+    <div class="fig-grid">
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_esm2/01_class_distribution.png" onclick="openLightbox(this)"><div class="fig-caption">Class distribution — ESM2 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_esm2/04_central_residue_composition.png" onclick="openLightbox(this)"><div class="fig-caption">Central residue composition — ESM2 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_esm2/05_roc_pr_curves.png" onclick="openLightbox(this)"><div class="fig-caption">ROC &amp; PR curves — ESM2 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_esm2/06_confusion_matrices.png" onclick="openLightbox(this)"><div class="fig-caption">Confusion matrices — ESM2 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_esm2/08_pca_tsne.png" onclick="openLightbox(this)"><div class="fig-caption">PCA / t-SNE embeddings — ESM2 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_esm2/09_model_performance_summary.png" onclick="openLightbox(this)"><div class="fig-caption">Model performance summary — ESM2 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_esm2/10_metrics_heatmap.png" onclick="openLightbox(this)"><div class="fig-caption">Metrics heatmap — ESM2 · WM793</div></div>
+    </div>
+  </div>
+  <div id="panel-prott5" class="tab-panel">
+    <div class="fig-grid">
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_prott5/01_class_distribution.png" onclick="openLightbox(this)"><div class="fig-caption">Class distribution — ProtT5 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_prott5/04_central_residue_composition.png" onclick="openLightbox(this)"><div class="fig-caption">Central residue composition — ProtT5 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_prott5/05_roc_pr_curves.png" onclick="openLightbox(this)"><div class="fig-caption">ROC &amp; PR curves — ProtT5 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_prott5/06_confusion_matrices.png" onclick="openLightbox(this)"><div class="fig-caption">Confusion matrices — ProtT5 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_prott5/08_pca_tsne.png" onclick="openLightbox(this)"><div class="fig-caption">PCA / t-SNE embeddings — ProtT5 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_prott5/09_model_performance_summary.png" onclick="openLightbox(this)"><div class="fig-caption">Model performance summary — ProtT5 · WM793</div></div>
+      <div class="fig-card"><img src="Melanoma_Phosphorylation_PDMAS_Ari_FUT4_OE_WM793/results_wm793_phospho_prott5/10_metrics_heatmap.png" onclick="openLightbox(this)"><div class="fig-caption">Metrics heatmap — ProtT5 · WM793</div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+    <a class="back-link" style="background:#fff1f2;border-color:#fecdd3;color:#991b1b;" href="report_wm1366.html">← Exp 1 — WM1366</a>
+    <a class="back-link" href="report.html">Overview</a>
+    <a class="back-link" style="background:#f5f3ff;border-color:#ddd6fe;color:#4c1d95;" href="report_prostate.html">Exp 3 — Prostate LNCaP →</a>
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<script>
+function switchTab(model, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + model).classList.add('active');
+  btn.classList.add('active');
+}
+function openLightbox(img) {
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+const sections = ['question','workflow','experiment','results','figures'];
+const navLinks  = document.querySelectorAll('.sticky-nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
