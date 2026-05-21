@@ -3,462 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PMADS PTM Drug Response — Overview · 3 Experiments</title>
+<title>PMADS PTM Drug Response — 3 Experiments</title>
 <style>
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-         background: #f0f4f8; color: #1e293b; line-height: 1.55; }
-
-  /* ── Header ── */
-  .hero {
-    background: linear-gradient(135deg, #1e3a5f 0%, #0f2a47 60%, #1a1a2e 100%);
-    color: #fff; padding: 2.8rem 2rem 2rem;
-    border-bottom: 4px solid #e2e8f0;
-  }
-  .hero h1 { font-size: 1.95rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .5rem; }
-  .hero .subtitle { font-size: 1rem; color: #93c5fd; margin-bottom: 1.2rem; }
-  .hero-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
-  .hchip {
-    background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.22);
-    color: #e2e8f0; border-radius: 20px; padding: .28rem .85rem;
-    font-size: .78rem; font-weight: 600; letter-spacing: .04em;
-  }
-
-  /* ── Sticky nav ── */
+         background: #f0f4f8; color: #1e293b; line-height: 1.5; }
   .sticky-nav {
     position: sticky; top: 0; z-index: 100;
     background: #fff; border-bottom: 2px solid #e2e8f0;
     display: flex; gap: 0; overflow-x: auto; padding: 0 1rem;
     box-shadow: 0 2px 8px rgba(0,0,0,.06);
   }
-  .sticky-nav a {
-    display: block; padding: .85rem 1.1rem; font-size: .82rem; font-weight: 600;
-    color: #64748b; text-decoration: none; white-space: nowrap; border-bottom: 3px solid transparent;
-    transition: all .15s;
-  }
-  .sticky-nav a:hover, .sticky-nav a.active { color: #1e3a5f; border-bottom-color: #1e3a5f; }
-
-  /* ── Layout ── */
-  .container { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
-
-  /* ── Section headings ── */
-  .section-heading {
-    font-size: 1.25rem; font-weight: 800; color: #0f172a;
-    border-left: 5px solid #1e3a5f; padding: .55rem 1rem;
-    margin: 2.5rem 0 1.2rem; background: #f8fafc;
-    border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: .7rem;
-  }
-  .section-heading .tag {
-    font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
-    background: #1e3a5f; color: #fff; border-radius: 4px; padding: .15rem .5rem;
-  }
-  .exp-heading {
-    font-size: 1.1rem; font-weight: 800; color: #0f172a;
-    padding: .5rem 1rem; margin: 2rem 0 1rem;
-    border-radius: 8px; display: flex; align-items: center; gap: .6rem;
-  }
-  .exp-melanoma-wm1366 { background: #fff1f2; border-left: 5px solid #dc2626; }
-  .exp-melanoma-wm793  { background: #f0fdfa; border-left: 5px solid #0891b2; }
-  .exp-prostate        { background: #f5f3ff; border-left: 5px solid #7c3aed; }
-
-  /* ── Model pills ── */
-  .model-pill { border-radius: 20px; padding: .2rem .65rem; font-size: .74rem; font-weight: 700; letter-spacing: .04em; }
+  .sticky-nav a { display: block; padding: .75rem 1rem; font-size: .82rem; font-weight: 600;
+    color: #64748b; text-decoration: none; white-space: nowrap; border-bottom: 3px solid transparent; transition: all .15s; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 1.8rem 1.5rem; }
+  .section-heading { font-size: 1.15rem; font-weight: 800; color: #0f172a;
+    border-left: 5px solid #1e3a5f; padding: .5rem 1rem; margin: 2rem 0 1rem;
+    background: #f8fafc; border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: .6rem; }
+  .section-heading .tag { font-size: .66rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; background: #1e3a5f; color: #fff; border-radius: 4px; padding: .12rem .45rem; }
+  .model-pill { border-radius: 20px; padding: .18rem .6rem; font-size: .73rem; font-weight: 700; }
   .pill-ankh   { background: #dcfce7; color: #14532d; }
   .pill-esm2   { background: #dbeafe; color: #1e40af; }
   .pill-prott5 { background: #ede9fe; color: #4c1d95; }
-
-  /* ── Overview cards ── */
-  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-  .ocard { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.1rem 1.2rem;
-           box-shadow: 0 1px 4px rgba(0,0,0,.05); text-align: center; }
-  .onum  { font-size: 1.7rem; font-weight: 800; color: #1e3a5f; }
-  .olabel { font-size: .76rem; color: #64748b; margin-top: .2rem; }
-
-  /* ── Experiment summary cards ── */
-  .exp-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
-  .exp-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
-              box-shadow: 0 1px 5px rgba(0,0,0,.06); overflow: hidden; }
-  .exp-card-header { padding: .8rem 1.2rem; font-size: .9rem; font-weight: 700; color: #fff; }
-  .exp-card-header.wm1366  { background: linear-gradient(90deg, #dc2626, #b91c1c); }
-  .exp-card-header.wm793   { background: linear-gradient(90deg, #0891b2, #0e7490); }
-  .exp-card-header.prostate{ background: linear-gradient(90deg, #7c3aed, #6d28d9); }
-  .exp-card-body { padding: 1rem 1.2rem; font-size: .84rem; color: #475569; line-height: 1.6; }
-  .exp-card-body .stat-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
-  .stat-chip { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 5px;
-               padding: .18rem .55rem; font-size: .74rem; font-weight: 600; color: #475569; }
-
-  /* ── Comparison table ── */
-  .comparison-wrap { overflow-x: auto; margin-bottom: 2rem; }
+  .comparison-wrap { overflow-x: auto; margin-bottom: 1.8rem; }
   .comp-table { width: 100%; border-collapse: collapse; background: #fff;
-                border-radius: 10px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,.06); }
+    border-radius: 10px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,.06); }
   .comp-table thead tr { background: #0f2a47; color: #fff; }
-  .comp-table thead th { padding: .7rem 1rem; font-size: .78rem; font-weight: 700;
-                         text-transform: uppercase; letter-spacing: .06em; }
+  .comp-table thead th { padding: .65rem 1rem; font-size: .76rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em; text-align: left; }
   .comp-table tbody tr:nth-child(even) { background: #f8fafc; }
   .comp-table tbody tr:hover { background: #eff6ff; }
-  .comp-table td { padding: .55rem 1rem; font-size: .84rem; border-bottom: 1px solid #f1f5f9; }
-  .comp-table td:first-child { font-weight: 500; }
-  .sub { font-size: .7rem; color: #94a3b8; margin-left: .3rem; font-weight: 400; }
-  .badge-val { display: inline-block; padding: .18rem .55rem; border-radius: 5px;
-               font-size: .82rem; font-weight: 700; }
+  .comp-table td { padding: .5rem 1rem; font-size: .83rem; border-bottom: 1px solid #f1f5f9; }
+  .sub { font-size: .69rem; color: #94a3b8; margin-left: .3rem; }
+  .badge-val { display: inline-block; padding: .15rem .5rem; border-radius: 5px; font-size: .81rem; font-weight: 700; }
   .bv-best   { background: #fef9c3; color: #713f12; border: 1px solid #fde047; }
   .bv-ankh   { background: #dcfce7; color: #14532d; }
   .bv-esm2   { background: #dbeafe; color: #1e40af; }
   .bv-prott5 { background: #ede9fe; color: #4c1d95; }
-
-  /* ── Callout boxes ── */
-  .callout { border-radius: 10px; padding: 1rem 1.3rem; margin-bottom: 1.5rem; font-size: .85rem; line-height: 1.6; }
-  .callout-blue   { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
-  .callout-green  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
-  .callout-amber  { background: #fefce8; border: 1px solid #fde68a; color: #78350f; }
-  .callout-purple { background: #f5f3ff; border: 1px solid #ddd6fe; color: #4c1d95; }
-  .callout-red    { background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; }
-
-  /* ── Tabbed figure gallery ── */
-  .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 1.5rem; }
-  .tab-btn {
-    padding: .6rem 1.2rem; font-size: .82rem; font-weight: 600; color: #64748b;
+  details summary { cursor: pointer; font-size: .81rem; font-weight: 700; color: #1e3a5f;
+    padding: .45rem .8rem; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;
+    margin-bottom: .5rem; user-select: none; list-style: none; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "▶ "; font-size: .68rem; }
+  details[open] summary::before { content: "▼ "; }
+  .full-table { width: 100%; border-collapse: collapse; background: #fff; font-size: .79rem;
+    border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 1rem; }
+  .full-table thead tr { background: #0f2a47; color: #fff; }
+  .full-table thead th { padding: .45rem .8rem; font-weight: 600; text-align: left; }
+  .full-table tbody tr:nth-child(even) { background: #f8fafc; }
+  .full-table td { padding: .4rem .8rem; border-bottom: 1px solid #e2e8f0; }
+  .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 1.2rem; }
+  .tab-btn { padding: .55rem 1.1rem; font-size: .81rem; font-weight: 600; color: #64748b;
     background: none; border: none; cursor: pointer; border-bottom: 3px solid transparent;
-    margin-bottom: -2px; transition: all .15s;
-  }
-  .tab-btn:hover { color: #1e3a5f; }
-  .tab-btn.active { color: #1e3a5f; border-bottom-color: #1e3a5f; }
+    margin-bottom: -2px; transition: all .15s; }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
-
-  /* ── Figure grid ── */
-  .fig-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
+  .fig-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
   .fig-card { background: #fff; border-radius: 10px; border: 1px solid #e2e8f0;
-              overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+    overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
   .fig-card img { width: 100%; display: block; cursor: pointer; transition: opacity .15s; }
   .fig-card img:hover { opacity: .88; }
-  .fig-caption { padding: .55rem .9rem; font-size: .76rem; color: #64748b; font-weight: 500;
-                 border-top: 1px solid #f1f5f9; background: #fafafa; }
-
-  /* ── Lightbox ── */
+  .fig-caption { padding: .45rem .85rem; font-size: .74rem; color: #64748b;
+    border-top: 1px solid #f1f5f9; background: #fafafa; }
   #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.87);
-              z-index: 9999; align-items: center; justify-content: center; padding: 1.5rem; }
+    z-index: 9999; align-items: center; justify-content: center; padding: 1.5rem; }
   #lightbox.open { display: flex; }
   #lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 6px; }
-  #lightbox-close { position: fixed; top: 1rem; right: 1.4rem; font-size: 2rem;
-                    color: #fff; cursor: pointer; line-height: 1; }
+  #lightbox-close { position: fixed; top: 1rem; right: 1.4rem; font-size: 2rem; color: #fff; cursor: pointer; }
+  .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .81rem;
+    font-weight: 600; text-decoration: none; margin-bottom: 1.2rem;
+    padding: .38rem .85rem; border-radius: 7px; }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .hchip { background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.22);
+    color: #f1f5f9; border-radius: 20px; padding: .25rem .8rem; font-size: .77rem; font-weight: 600; }
 
-  /* ── Full metrics table accordion ── */
-  details summary {
-    cursor: pointer; font-size: .82rem; font-weight: 700; color: #1e3a5f;
-    padding: .5rem .8rem; background: #eff6ff; border-radius: 8px;
-    border: 1px solid #bfdbfe; margin-bottom: .6rem; user-select: none;
-    list-style: none;
-  }
-  details summary::-webkit-details-marker { display: none; }
-  details summary::before { content: "▶ "; font-size: .7rem; }
-  details[open] summary::before { content: "▼ "; }
-
-  /* ── Experiment hub cards ── */
-  .exp-hub { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.4rem; margin-bottom: 2rem; }
-  .exp-hub-card {
-    background: #fff; border-radius: 14px; border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0,0,0,.07); overflow: hidden;
-    transition: transform .15s, box-shadow .15s;
-  }
-  .exp-hub-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.1); }
-  .exp-hub-header { padding: 1.1rem 1.4rem; color: #fff; }
-  .exp-hub-header .exp-num { font-size: .72rem; font-weight: 700; text-transform: uppercase;
-                              letter-spacing: .1em; opacity: .8; margin-bottom: .3rem; }
-  .exp-hub-header h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: .2rem; }
-  .exp-hub-header .exp-sub { font-size: .8rem; opacity: .85; }
-  .exp-hub-body { padding: 1.1rem 1.4rem; }
-  .exp-hub-meta { font-size: .82rem; color: #475569; line-height: 1.6; margin-bottom: .9rem; }
-  .metrics-mini { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .hero { background: linear-gradient(135deg, #1e3a5f 0%, #0f2a47 60%, #1a1a2e 100%);
+    color: #fff; padding: 2.4rem 2rem 1.8rem; border-bottom: 4px solid #e2e8f0; }
+  .hero h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .4rem; }
+  .hero .subtitle { font-size: .93rem; color: #93c5fd; margin-bottom: 1.1rem; }
+  .sticky-nav a:hover, .sticky-nav a.active { color: #1e3a5f; border-bottom-color: #1e3a5f; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .9rem; margin-bottom: 1.5rem; }
+  .scard { background: #fff; border-radius: 10px; border: 1px solid #e2e8f0; padding: .9rem 1rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .snum  { font-size: 1.55rem; font-weight: 800; color: #1e3a5f; }
+  .slbl  { font-size: .73rem; color: #64748b; margin-top: .15rem; }
+  .exp-hub { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 1.3rem; margin-bottom: 2rem; }
+  .exp-hub-card { background: #fff; border-radius: 13px; border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 7px rgba(0,0,0,.07); overflow: hidden; transition: transform .15s, box-shadow .15s; }
+  .exp-hub-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,.1); }
+  .exp-hub-header { padding: 1rem 1.3rem; color: #fff; }
+  .exp-hub-header .exp-num { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-bottom: .25rem; }
+  .exp-hub-header h3 { font-size: 1rem; font-weight: 800; margin-bottom: .15rem; }
+  .exp-hub-header .exp-sub { font-size: .78rem; opacity: .85; }
+  .exp-hub-body { padding: 1rem 1.3rem; }
+  .exp-hub-meta { font-size: .81rem; color: #475569; margin-bottom: .8rem; line-height: 1.5; }
+  .metrics-mini { display: flex; gap: .45rem; flex-wrap: wrap; margin-bottom: .6rem; }
   .mm-chip { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px;
-             padding: .25rem .7rem; font-size: .78rem; font-weight: 700; color: #1e293b; }
-  .mm-chip .mm-val { color: #1e3a5f; font-size: .88rem; }
+    padding: .22rem .65rem; font-size: .77rem; font-weight: 700; color: #1e293b; }
+  .mm-chip .mm-val { color: #1e3a5f; font-size: .86rem; }
   .mm-chip.best-chip { background: #fef9c3; border-color: #fde047; color: #713f12; }
   .exp-hub-cta { display: flex; align-items: center; justify-content: space-between;
-                 padding: .8rem 1.4rem; border-top: 1px solid #f1f5f9; background: #fafafa; }
-  .exp-hub-cta a {
-    display: inline-block; padding: .5rem 1.1rem; border-radius: 8px;
-    font-size: .82rem; font-weight: 700; text-decoration: none; color: #fff;
-  }
-
-  /* biological question callout strip */
-  .bq-strip { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
-              box-shadow: 0 1px 4px rgba(0,0,0,.05); overflow: hidden; margin-bottom: 1.5rem; }
-  .bq-header { padding: .8rem 1.3rem; background: #0f2a47; color: #93c5fd;
-               font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
-  .bq-body { padding: 1.1rem 1.4rem; font-size: .86rem; color: #334155; line-height: 1.7; }
+    padding: .75rem 1.3rem; border-top: 1px solid #f1f5f9; background: #fafafa; }
+  .exp-hub-cta a { display: inline-block; padding: .45rem 1rem; border-radius: 8px;
+    font-size: .81rem; font-weight: 700; text-decoration: none; color: #fff; }
 </style>
 </head>
 <body>
-
-<!-- ─────────────────────────────────────── HERO ── -->
-<div class="hero">
-  <h1>PMADS PTM Drug Response Prediction</h1>
-  <div class="subtitle">Can protein language models predict up/down PTM regulation under drug treatment from sequence alone? — 3 experiments · phosphorylation &amp; acetylation · PMADS 2026</div>
-  <div class="hero-chips">
-    <span class="hchip">PMADS Database</span>
-    <span class="hchip">Phosphorylation · PTMs</span>
-    <span class="hchip">3 Experiments</span>
-    <span class="hchip">Ankh · ESM2 · ProtT5</span>
-    <span class="hchip">4 Model Variants</span>
-    <span class="hchip">Melanoma · Prostate Cancer</span>
-    <span class="hchip">FUT4 OE · Palbociclib</span>
-  </div>
-</div>
-
-<!-- ── Sticky nav ── -->
-<nav class="sticky-nav">
-  <a href="#pmads">PMADS Dataset</a>
-  <a href="#question">Biological Question</a>
-  <a href="#overview">Experiments</a>
-</nav>
-
 <div id="lightbox">
-  <span id="lightbox-close" onclick="closeLightbox()">✕</span>
+  <span id="lightbox-close" onclick="closeLightbox()">&#x2715;</span>
   <img id="lightbox-img" src="" alt="">
 </div>
 
+<div class="hero">
+  <h1>PMADS PTM Drug Response Prediction</h1>
+  <div class="subtitle">Can PLMs predict phospho-site up/down regulation under drug treatment from sequence alone? — 3 experiments · PMADS 2026</div>
+  <div class="hero-chips">
+    <span class="hchip">PMADS Database</span>
+    <span class="hchip">Phosphorylation</span>
+    <span class="hchip">3 Experiments</span>
+    <span class="hchip">Ankh · ESM2 · ProtT5</span>
+    <span class="hchip">Melanoma · Prostate</span>
+    <span class="hchip">Arimoclomol · Palbociclib</span>
+  </div>
+</div>
+
+<nav class="sticky-nav">
+  <a href="#pmads">PMADS</a>
+  <a href="#experiments">Experiments</a>
+</nav>
+
 <div class="container">
 
-  <!-- ─────────────────────────────────────── PMADS DATASET ── -->
-  <div id="pmads" class="section-heading">
-    PMADS: Protein Modification and Drug Sensitivity Database
-    <span class="tag">Source Database</span>
+  <div id="pmads" class="section-heading">PMADS Database <span class="tag">Source</span></div>
+
+  <div class="stats-grid">
+    <div class="scard"><div class="snum">4,775</div><div class="slbl">Curated PTM–drug–disease entries</div></div>
+    <div class="scard"><div class="snum">43,800+</div><div class="slbl">Inferred associations (PRIDE)</div></div>
+    <div class="scard"><div class="snum">6,420</div><div class="slbl">Proteins covered</div></div>
+    <div class="scard"><div class="snum">19</div><div class="slbl">PTM types</div></div>
+    <div class="scard"><div class="snum">1,037</div><div class="slbl">Drugs</div></div>
+    <div class="scard"><div class="snum">~300</div><div class="slbl">Disease classes</div></div>
   </div>
 
-  <!-- Stats row -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Resource</div>
-      <div style="font-size:1rem;font-weight:700;color:#1e3a5f;">PMADS</div>
-      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Protein Modification &amp; Drug Sensitivity</div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Curated associations</div>
-      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">4,775</div>
-      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Manually curated PTM–drug–disease entries</div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Inferred associations</div>
-      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">43,800+</div>
-      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">From large-scale proteomics datasets (PRIDE)</div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Proteins covered</div>
-      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">6,420</div>
-      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Spanning 19 PTM types · 1,037 drugs</div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">Disease classes</div>
-      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">~300</div>
-      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Cancer (63.7%) · metabolic · inflammatory</div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:1rem 1.2rem;">
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.35rem;">PTM types</div>
-      <div style="font-size:1.45rem;font-weight:700;color:#1e3a5f;">19</div>
-      <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">Phosphorylation, acetylation, ubiquitination…</div>
-    </div>
+  <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:.85rem 1.1rem;font-size:.83rem;color:#78350f;margin-bottom:1.5rem;">
+    <strong>Task:</strong> Binary MLP classification of phospho-sites as drug-responsive (up-regulated) vs inert, using PLM sequence embeddings only — no drug structure, no pathway knowledge.
+    4 embedding strategies: <strong>CenterOnly</strong> · <strong>AttnPool</strong> · <strong>MaxPool</strong> · <strong>Hybrid (C+Attn)</strong>.
+    Cite: Zheng J, et al. (2026) <em>NAR</em> 54(D1):D1569–D1578.
   </div>
 
-  <!-- Description card -->
-  <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow:hidden;margin-bottom:1.5rem;">
-    <div style="padding:.8rem 1.2rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;">
-      <span style="font-size:.95rem;font-weight:700;color:#1e293b;">Database Description</span>
-    </div>
-    <div style="padding:1.1rem 1.3rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
-      <div>
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">What is PMADS?</div>
-        <div style="font-size:.85rem;color:#475569;">An integrated database that systematically organises PTM–drug–disease <strong>ternary associations</strong> — i.e. PTM-centred drug responses in disease context. PTM events may modulate drug efficacy, drugs may alter PTM levels, or associations may exist without a clear causal direction.</div>
-      </div>
-      <div>
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">Regulatory classes</div>
-        <div style="font-size:.85rem;color:#475569;">
-          <span style="display:inline-block;background:#dcfce7;color:#14532d;border-radius:4px;padding:.1rem .45rem;font-size:.76rem;font-weight:700;margin-right:.3rem;">Enhancing</span> PTM events that improve drug efficacy.<br>
-          <span style="display:inline-block;background:#fee2e2;color:#991b1b;border-radius:4px;padding:.1rem .45rem;font-size:.76rem;font-weight:700;margin-right:.3rem;margin-top:.3rem;">Impairing</span> PTM events that reduce or antagonise drug efficacy.<br>
-          <span style="display:inline-block;background:#f1f5f9;color:#475569;border-radius:4px;padding:.1rem .45rem;font-size:.76rem;font-weight:700;margin-right:.3rem;margin-top:.3rem;">Associated</span> Directional mechanism unclear.
-        </div>
-      </div>
-      <div>
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">Curated data pipeline</div>
-        <div style="font-size:.85rem;color:#475569;">Mined &gt;2 million PubMed abstracts via PubTator entity recognition + dependency parsing (Stanza) + expert manual review across 11 species. Confidence scores 2–5 mapped to High / Moderate / Low.</div>
-      </div>
-      <div>
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.3rem;">Inferred data pipeline</div>
-        <div style="font-size:.85rem;color:#475569;">50 PRIDE proteomics datasets processed via MaxQuant (LFQ, TMT, SILAC). Sites filtered by score &gt;40, localisation probability &gt;0.8, FDR-corrected Wilcoxon test (adjusted P &lt; 0.05).</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Citation + data used -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;">
-    <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:1rem 1.2rem;">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#b45309;margin-bottom:.4rem;">Citation</div>
-      <div style="font-size:.82rem;color:#78350f;line-height:1.55;">
-        Zheng J, et al. (2026) <em>PMADS: an integrated database of curated and proteomics-inferred associations between protein post-translational modifications and drug sensitivity.</em> <strong>Nucleic Acids Research</strong>. 54(D1):D1569–D1578.
-        <br><span style="font-size:.75rem;opacity:.75;">DOI: 10.1093/nar/gkaf1033</span>
-      </div>
-    </div>
-    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:1rem 1.2rem;">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#15803d;margin-bottom:.4rem;">Data used in this study</div>
-      <div style="font-size:.82rem;color:#14532d;line-height:1.55;">
-        Downloaded <strong>PMADS.xlsx</strong> (core curated dataset) and <strong>Whole_DB.zip</strong> (full database including manually calibrated literature profiles, PTM annotated profiles, disease annotated profiles, protein and drug annotated profiles). Filtered to phosphorylation events in three disease / drug contexts for binary classification (drug-sensitive vs drug-resistant phosphoprotein sites).
-      </div>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────── BIOLOGICAL QUESTION ── -->
-  <div id="question" class="section-heading">
-    Biological Question &amp; Workflow
-    <span class="tag">Core Hypothesis</span>
-  </div>
-
-  <div class="bq-strip">
-    <div class="bq-header">Central Question</div>
-    <div class="bq-body">
-      <p style="font-size:.95rem;font-weight:700;color:#0f172a;margin-bottom:.8rem;">Can a protein language model predict which sites will be up- or down-regulated in PTM abundance under a specific drug treatment — using <em>only</em> the protein's amino acid sequence?</p>
-      <p style="margin-bottom:.8rem;">The model receives no drug structure, no pathway knowledge, no cell-line identity — only raw residues. If PLMs succeed, it means evolution has encoded PTM-regulatory grammar into sequence-local and long-range patterns that language models can read, enabling <strong>zero-shot prioritisation</strong> of drug-responsive PTM sites without mass-spec experiments.</p>
-      <p style="margin-bottom:.8rem;"><strong>PTM types investigated:</strong>
-        <span style="display:inline-block;background:#fee2e2;color:#991b1b;border-radius:4px;padding:.1rem .45rem;font-size:.76rem;font-weight:700;margin:0 .3rem;">Phosphorylation</span> Ser/Thr/Tyr — used in all 3 experiments here (kinase-signalling cascades triggered by Arimoclomol and Palbociclib).
-        <span style="display:inline-block;background:#fef9c3;color:#713f12;border-radius:4px;padding:.1rem .45rem;font-size:.76rem;font-weight:700;margin:0 .3rem;">Acetylation</span> Lys — investigated in separate experiments using the identical pipeline on PMADS acetylation entries; the modified Lys becomes the "centre" residue. Results not shown in this report.
-      </p>
-      <p><strong>Workflow (shared across all 3 experiments):</strong></p>
-      <ol style="margin:.5rem 0 0 1.2rem;line-height:1.9;font-size:.84rem;">
-        <li><strong>PMADS filtering</strong> — select entries by drug + cell-line + PTM type, retaining sites with FDR-corrected significance (adj. P &lt; 0.05, MaxQuant score &gt; 40, localisation probability &gt; 0.8)</li>
-        <li><strong>Label assignment</strong> — up-regulated site in drug condition → class 1 (drug-responsive); down-regulated/unchanged → class 0</li>
-        <li><strong>PLM embedding</strong> — four strategies: <em>CenterOnly</em> (modified residue only), <em>AttnPool</em> (attention-weighted sequence mean), <em>MaxPool</em> (element-wise max), <em>Hybrid C+Attn</em> (concat of CenterOnly + AttnPool)</li>
-        <li><strong>Binary MLP classifier</strong> — 2-layer MLP with class-weighted BCE loss, 80:20 train/test split</li>
-        <li><strong>Evaluation</strong> — AUROC, AUPRC, Precision, Recall, F1 on held-out test; best variant per PLM by F1</li>
-      </ol>
-    </div>
-  </div>
-
-  <!-- ─────────────────────────────────────── EXPERIMENTS HUB ── -->
-  <div id="overview" class="section-heading">
-    3 Experiments — Select to Explore
-    <span class="tag">3 Experiments</span>
-  </div>
-
-  <div class="overview-grid" style="margin-bottom:1.5rem;">
-    <div class="ocard"><div class="onum">3</div><div class="olabel">Experiments</div></div>
-    <div class="ocard"><div class="onum">3</div><div class="olabel">PLM models</div></div>
-    <div class="ocard"><div class="onum">4</div><div class="olabel">Variants per PLM</div></div>
-    <div class="ocard"><div class="onum">2</div><div class="olabel">Cancer types (Melanoma · Prostate)</div></div>
-    <div class="ocard"><div class="onum">Phospho</div><div class="olabel">PTM type (this report)</div></div>
-    <div class="ocard"><div class="onum">Acetyl</div><div class="olabel">PTM type (separate experiments)</div></div>
-  </div>
+  <div id="experiments" class="section-heading">3 Experiments <span class="tag">Results</span></div>
 
   <div class="exp-hub">
 
-    <!-- Exp 1 — WM1366 -->
     <div class="exp-hub-card">
       <div class="exp-hub-header" style="background:linear-gradient(90deg,#991b1b,#b91c1c);">
         <div class="exp-num">Experiment 1</div>
-        <h3>Melanoma · WM1366 · Arimoclomol</h3>
+        <h3>Melanoma WM1366 · Arimoclomol</h3>
         <div class="exp-sub">FUT4 OE · Phosphorylation</div>
       </div>
       <div class="exp-hub-body">
-        <div class="exp-hub-meta">WM1366 melanoma cell line with FUT4 overexpression treated with Arimoclomol (HSP co-inducer). Binary classification of phospho-sites as drug-responsive vs inert using PLM sequence embeddings alone.</div>
+        <div class="exp-hub-meta">WM1366 melanoma + FUT4 overexpression, Arimoclomol (HSP co-inducer). Best AUROC: ESM2 0.769.</div>
         <div class="metrics-mini">
           <div class="mm-chip">Ankh AUROC <span class="mm-val">0.748</span></div>
-          <div class="mm-chip best-chip">ESM2 AUROC <span class="mm-val">0.777 ★</span></div>
+          <div class="mm-chip best-chip">ESM2 AUROC <span class="mm-val">0.769 &#9733;</span></div>
           <div class="mm-chip">ProtT5 AUROC <span class="mm-val">0.765</span></div>
         </div>
         <div class="metrics-mini">
           <div class="mm-chip">Ankh F1 <span class="mm-val">0.642</span></div>
-          <div class="mm-chip best-chip">ESM2 F1 <span class="mm-val">0.694 ★</span></div>
-          <div class="mm-chip">ProtT5 F1 <span class="mm-val">0.696</span></div>
+          <div class="mm-chip">ESM2 F1 <span class="mm-val">0.673</span></div>
+          <div class="mm-chip best-chip">ProtT5 F1 <span class="mm-val">0.696 &#9733;</span></div>
         </div>
       </div>
       <div class="exp-hub-cta">
-        <span style="font-size:.75rem;color:#94a3b8;">CenterOnly best for ESM2 · Hybrid best for Ankh</span>
-        <a href="report_wm1366.html" style="background:#dc2626;">Open Report →</a>
+        <span style="font-size:.74rem;color:#94a3b8;">ProtT5 AttnPool leads on F1</span>
+        <a href="report_wm1366.html" style="background:#dc2626;">Open Report &#8594;</a>
       </div>
     </div>
 
-    <!-- Exp 2 — WM793 -->
     <div class="exp-hub-card">
       <div class="exp-hub-header" style="background:linear-gradient(90deg,#0c4a6e,#0369a1);">
         <div class="exp-num">Experiment 2</div>
-        <h3>Melanoma · WM793 · Arimoclomol</h3>
+        <h3>Melanoma WM793 · Arimoclomol</h3>
         <div class="exp-sub">FUT4 OE · Phosphorylation · Replication</div>
       </div>
       <div class="exp-hub-body">
-        <div class="exp-hub-meta">Replication of Exp 1 in an independent melanoma cell line (WM793, metastatic background). Same drug + perturbation context tests whether PLM predictions generalise across tumour backgrounds.</div>
+        <div class="exp-hub-meta">Independent melanoma line (WM793, metastatic). Same drug context tests cross-cell-line consistency. Best AUROC: ESM2 0.743.</div>
         <div class="metrics-mini">
-          <div class="mm-chip">Ankh AUROC <span class="mm-val">0.712</span></div>
-          <div class="mm-chip best-chip">ESM2 AUROC <span class="mm-val">0.732 ★</span></div>
-          <div class="mm-chip">ProtT5 AUROC <span class="mm-val">0.719</span></div>
+          <div class="mm-chip">Ankh AUROC <span class="mm-val">0.713</span></div>
+          <div class="mm-chip best-chip">ESM2 AUROC <span class="mm-val">0.743 &#9733;</span></div>
+          <div class="mm-chip">ProtT5 AUROC <span class="mm-val">0.720</span></div>
         </div>
         <div class="metrics-mini">
           <div class="mm-chip">Ankh F1 <span class="mm-val">0.670</span></div>
-          <div class="mm-chip best-chip">ESM2 F1 <span class="mm-val">0.694 ★</span></div>
-          <div class="mm-chip">ProtT5 F1 <span class="mm-val">0.686</span></div>
+          <div class="mm-chip best-chip">ESM2 F1 <span class="mm-val">0.710 &#9733;</span></div>
+          <div class="mm-chip">ProtT5 F1 <span class="mm-val">0.691</span></div>
         </div>
       </div>
       <div class="exp-hub-cta">
-        <span style="font-size:.75rem;color:#94a3b8;">Results closely track Exp 1 — cross-cell-line consistency</span>
-        <a href="report_wm793.html" style="background:#0369a1;">Open Report →</a>
+        <span style="font-size:.74rem;color:#94a3b8;">ESM2 Hybrid leads overall</span>
+        <a href="report_wm793.html" style="background:#0369a1;">Open Report &#8594;</a>
       </div>
     </div>
 
-    <!-- Exp 3 — Prostate -->
     <div class="exp-hub-card">
       <div class="exp-hub-header" style="background:linear-gradient(90deg,#3b0764,#6d28d9);">
         <div class="exp-num">Experiment 3</div>
         <h3>Prostate LNCaP · Palbociclib</h3>
-        <div class="exp-sub">CDK4/6 Inhibitor · Phosphorylation · Highest AUROC</div>
+        <div class="exp-sub">CDK4/6 Inhibitor · Highest AUROC</div>
       </div>
       <div class="exp-hub-body">
-        <div class="exp-hub-meta">Hormone-sensitive prostate cancer (LNCaP) treated with Palbociclib (CDK4/6 inhibitor). All PLMs achieve AUROC &gt; 0.79 — highest of the 3 experiments. CDK4/6 substrate consensus motifs (S/T-P-x-K/R) may be directly learnable by PLMs.</div>
+        <div class="exp-hub-meta">LNCaP prostate cancer, Palbociclib (CDK4/6 inhibitor). All PLMs achieve AUROC &gt; 0.79 — highest of the 3 experiments.</div>
         <div class="metrics-mini">
-          <div class="mm-chip best-chip">Ankh AUROC <span class="mm-val">0.813 ★</span></div>
-          <div class="mm-chip">ESM2 AUROC <span class="mm-val">0.792</span></div>
-          <div class="mm-chip best-chip">ProtT5 AUROC <span class="mm-val">0.819 ★</span></div>
+          <div class="mm-chip">Ankh AUROC <span class="mm-val">0.813</span></div>
+          <div class="mm-chip">ESM2 AUROC <span class="mm-val">0.801</span></div>
+          <div class="mm-chip best-chip">ProtT5 AUROC <span class="mm-val">0.817 &#9733;</span></div>
         </div>
         <div class="metrics-mini">
           <div class="mm-chip">Ankh F1 <span class="mm-val">0.571</span></div>
-          <div class="mm-chip">ESM2 F1 <span class="mm-val">0.600</span></div>
-          <div class="mm-chip best-chip">ProtT5 F1 <span class="mm-val">0.641 ★</span></div>
+          <div class="mm-chip">ESM2 F1 <span class="mm-val">0.560</span></div>
+          <div class="mm-chip best-chip">ProtT5 F1 <span class="mm-val">0.629 &#9733;</span></div>
         </div>
       </div>
       <div class="exp-hub-cta">
-        <span style="font-size:.75rem;color:#94a3b8;">CenterOnly leads — local motif encoding key</span>
-        <a href="report_prostate.html" style="background:#7c3aed;">Open Report →</a>
+        <span style="font-size:.74rem;color:#94a3b8;">CDK4/6 motifs boost AUROC</span>
+        <a href="report_prostate.html" style="background:#7c3aed;">Open Report &#8594;</a>
       </div>
     </div>
 
   </div>
 
-  <!-- ── Footer spacer ── -->
-  <div style="height:3rem;"></div>
-
-</div><!-- /container -->
-
+  <div style="height:2rem;"></div>
+</div>
 
 <script>
+
 function openLightbox(img) {
   document.getElementById('lightbox-img').src = img.src;
   document.getElementById('lightbox').classList.add('open');
 }
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-}
-document.getElementById('lightbox').addEventListener('click', function(e) {
-  if (e.target === this) closeLightbox();
-});
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', function(e) { if (e.target === this) closeLightbox(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-const sections = ['pmads','question','overview'];
-const navLinks  = document.querySelectorAll('.sticky-nav a');
+const _sections = ['pmads','experiments'];
+const _navLinks = document.querySelectorAll('.sticky-nav a');
 window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && window.scrollY >= el.offsetTop - 120) current = id;
-  });
-  navLinks.forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-  });
+  let cur = '';
+  _sections.forEach(id => { const el = document.getElementById(id); if (el && window.scrollY >= el.offsetTop - 120) cur = id; });
+  _navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + cur); });
 }, { passive: true });
 </script>
 </body>
